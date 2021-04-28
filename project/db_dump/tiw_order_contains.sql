@@ -16,30 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `user`
+-- Table structure for table `order_contains`
 --
 
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `order_contains`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  `surname` varchar(45) NOT NULL,
-  `email` varchar(45) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `shipping_address` varchar(128) NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `order_contains` (
+  `order_code` int NOT NULL,
+  `product_code` int NOT NULL,
+  `quantity` int NOT NULL,
+  PRIMARY KEY (`order_code`,`product_code`),
+  KEY `product_code_idx` (`product_code`),
+  CONSTRAINT `order_code` FOREIGN KEY (`order_code`) REFERENCES `order` (`code`),
+  CONSTRAINT `product_code` FOREIGN KEY (`product_code`) REFERENCES `product` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `user`
+-- Dumping data for table `order_contains`
 --
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+LOCK TABLES `order_contains` WRITE;
+/*!40000 ALTER TABLE `order_contains` DISABLE KEYS */;
+/*!40000 ALTER TABLE `order_contains` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
