@@ -1,0 +1,19 @@
+title This is a title
+
+activate CheckLogin
+CheckLogin -> UserDAO :new UserDAO (username, password)
+activate UserDAO
+UserDAO<-CheckLogin : checkCredentials
+UserDAO->CheckLogin :user | | null
+activate index.html
+CheckLogin->index.html:[user==null] redirect
+activate Session
+CheckLogin->Session:[user!=null] setAttribute("user",user)
+activate GoToHome
+CheckLogin->GoToHome : [user!=null] redirect
+
+
+
+
+
+

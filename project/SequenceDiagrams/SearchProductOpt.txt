@@ -1,0 +1,25 @@
+title Search Product
+
+activate GoToSearchResults
+GoToSearchResults -> ProductDAO : newProductDAO()
+activate ProductDAO
+GoToSearchResults -> ProductDAO : searchForProduct(searchQuery)
+GoToSearchResults <- ProductDAO : products
+GoToSearchResults -> SellsDAO : new SellsDAO()
+activate SellsDAO
+
+loop product : products
+GoToSearchResults ->SellsDAO : findMinPrice(product.code)
+SellsDAO->GoToSearchResults : minPrice
+end
+
+opt selectedCode!=null
+GoToSearchResults -> SellsDAO : findAllSuppliers(selectedCode)
+GoToSearchResults <- SellsDAO : suppliers
+GoToSearchResults->ctx : setVariable(suppliers)
+end
+
+activate ctx
+GoToSearchResults -> ctx : setVariable(products)
+activate TemplateEngine
+GoToSearchResults->TemplateEngine : process(ctx,"SearchResults.html",...)
