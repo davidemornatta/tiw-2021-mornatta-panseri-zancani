@@ -28,8 +28,8 @@ CREATE TABLE `sells` (
   `price` float NOT NULL,
   PRIMARY KEY (`product_code`,`supplier_code`),
   KEY `supplier_code_sells_idx` (`supplier_code`),
-  CONSTRAINT `product_code_sells` FOREIGN KEY (`product_code`) REFERENCES `product` (`code`),
-  CONSTRAINT `supplier_code_sells` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`)
+  CONSTRAINT `product_code_sells` FOREIGN KEY (`product_code`) REFERENCES `product` (`code`) ON UPDATE CASCADE,
+  CONSTRAINT `supplier_code_sells` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-28 13:34:17
+-- Dump completed on 2021-05-03 18:06:06

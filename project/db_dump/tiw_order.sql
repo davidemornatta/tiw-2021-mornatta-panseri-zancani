@@ -32,8 +32,8 @@ CREATE TABLE `order` (
   PRIMARY KEY (`code`),
   KEY `supplier_code_idx` (`supplier_code`),
   KEY `user_id_idx` (`user_id`),
-  CONSTRAINT `supplier_code` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`),
-  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `supplier_code` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`) ON UPDATE CASCADE,
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-28 13:34:17
+-- Dump completed on 2021-05-03 18:06:06
