@@ -1,12 +1,12 @@
 title Go to Home
 
 activate GoToHome
+note left of GoToHome : redirect
 GoToHome -> RecentlyViewedDAO : new RecentlyViewedDAO()
 activate RecentlyViewedDAO
 GoToHome -> RecentlyViewedDAO :findLastFiveViewedBy(session.user.id)
-GoToHome <- RecentlyViewedDAO : products
+GoToHome <-- RecentlyViewedDAO : products
 activate ctx
 GoToHome ->ctx : setVariable(products)
 activate TemplateEngine
 GoToHome -> TemplateEngine : process(ctx,"Home.html", ... )
-

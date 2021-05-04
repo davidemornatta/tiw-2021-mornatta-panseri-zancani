@@ -1,16 +1,20 @@
-title This is a title
+title Login
 
 activate CheckLogin
-CheckLogin -> UserDAO :new UserDAO (username, password)
+note left of CheckLogin: doPost\n\nPOST\n/CheckLogin\nusername\npassword\n\nFrom:\nindex.html
+CheckLogin -> UserDAO : new UserDAO (username, password)
 activate UserDAO
 UserDAO<-CheckLogin : checkCredentials
-UserDAO->CheckLogin :user | | null
+UserDAO-->CheckLogin : user || null
 activate index.html
-CheckLogin->index.html:[user==null] redirect
+alt user == null
+CheckLogin->index.html : redirect
 activate Session
-CheckLogin->Session:[user!=null] setAttribute("user",user)
+else user != null
+CheckLogin->Session : setAttribute("user",user)
 activate GoToHome
-CheckLogin->GoToHome : [user!=null] redirect
+CheckLogin->GoToHome : redirect
+end
 
 
 
