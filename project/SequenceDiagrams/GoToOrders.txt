@@ -1,0 +1,21 @@
+title Go To Orders
+activate GoToOrders
+note left of GoToOrders : doGet\n\nGET\n/GoToOrders\n\nFrom: Navbar.html
+GoToOrders -> OrderDAO : new OrderDAO()
+activate OrderDAO
+GoToOrders ->OrderDAO : findUserOrders(session.user.id)
+GoToOrders<--OrderDAO : orders
+GoToOrders->OrderContainsDAO : new OrderContainsDAO()
+activate OrderContainsDAO
+loop order : orders
+GoToOrders->OrderContainsDAO : findAllProductsInOrder(order.code)
+GoToOrders<--OrderContainsDAO : products
+end
+activate ctx
+GoToOrders -> ctx : setVariable(orders)
+activate TemplateEngine
+GoToOrders->TemplateEngine : process(ctx,"Orders.html",...)
+
+
+
+
