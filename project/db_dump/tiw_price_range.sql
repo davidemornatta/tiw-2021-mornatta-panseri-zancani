@@ -22,15 +22,16 @@
 DROP TABLE IF EXISTS `price_range`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `price_range` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `supplier_code` int NOT NULL,
-  `min_articles` int NOT NULL,
-  `max_articles` int NOT NULL,
-  `shipping_cost` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `supplier_code_idx` (`supplier_code`),
-  CONSTRAINT `supplier_code_pr` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`) ON UPDATE CASCADE
+CREATE TABLE `price_range`
+(
+    `id`            int NOT NULL AUTO_INCREMENT,
+    `supplier_code` int NOT NULL,
+    `min_articles`  int NOT NULL,
+    `max_articles`  int NOT NULL,
+    `shipping_cost` int NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY             `supplier_code_idx` (`supplier_code`),
+    CONSTRAINT `supplier_code_pr` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -38,10 +39,12 @@ CREATE TABLE `price_range` (
 -- Dumping data for table `price_range`
 --
 
-LOCK TABLES `price_range` WRITE;
+LOCK
+TABLES `price_range` WRITE;
 /*!40000 ALTER TABLE `price_range` DISABLE KEYS */;
 /*!40000 ALTER TABLE `price_range` ENABLE KEYS */;
-UNLOCK TABLES;
+UNLOCK
+TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

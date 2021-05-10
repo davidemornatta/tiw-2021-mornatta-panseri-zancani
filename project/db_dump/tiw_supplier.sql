@@ -22,12 +22,13 @@
 DROP TABLE IF EXISTS `supplier`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `supplier` (
-  `code` int NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `rating` int DEFAULT NULL,
-  `free_shipping_cost` int DEFAULT NULL,
-  PRIMARY KEY (`code`)
+CREATE TABLE `supplier`
+(
+    `code`               int         NOT NULL,
+    `name`               varchar(45) NOT NULL,
+    `rating`             int DEFAULT NULL,
+    `free_shipping_cost` int DEFAULT NULL,
+    PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -35,10 +36,12 @@ CREATE TABLE `supplier` (
 -- Dumping data for table `supplier`
 --
 
-LOCK TABLES `supplier` WRITE;
+LOCK
+TABLES `supplier` WRITE;
 /*!40000 ALTER TABLE `supplier` DISABLE KEYS */;
 /*!40000 ALTER TABLE `supplier` ENABLE KEYS */;
-UNLOCK TABLES;
+UNLOCK
+TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

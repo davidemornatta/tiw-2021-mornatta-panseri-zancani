@@ -1,14 +1,2 @@
-.metadata
-bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-.recommenders
-*.launch
-.project
-/build/
+.idea/
+target/

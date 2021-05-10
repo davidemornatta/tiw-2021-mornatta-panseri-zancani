@@ -22,14 +22,15 @@
 DROP TABLE IF EXISTS `sells`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `sells` (
-  `product_code` int NOT NULL,
-  `supplier_code` int NOT NULL,
-  `price` float NOT NULL,
-  PRIMARY KEY (`product_code`,`supplier_code`),
-  KEY `supplier_code_sells_idx` (`supplier_code`),
-  CONSTRAINT `product_code_sells` FOREIGN KEY (`product_code`) REFERENCES `product` (`code`) ON UPDATE CASCADE,
-  CONSTRAINT `supplier_code_sells` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`) ON UPDATE CASCADE
+CREATE TABLE `sells`
+(
+    `product_code`  int   NOT NULL,
+    `supplier_code` int   NOT NULL,
+    `price`         float NOT NULL,
+    PRIMARY KEY (`product_code`, `supplier_code`),
+    KEY             `supplier_code_sells_idx` (`supplier_code`),
+    CONSTRAINT `product_code_sells` FOREIGN KEY (`product_code`) REFERENCES `product` (`code`) ON UPDATE CASCADE,
+    CONSTRAINT `supplier_code_sells` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -37,10 +38,12 @@ CREATE TABLE `sells` (
 -- Dumping data for table `sells`
 --
 
-LOCK TABLES `sells` WRITE;
+LOCK
+TABLES `sells` WRITE;
 /*!40000 ALTER TABLE `sells` DISABLE KEYS */;
 /*!40000 ALTER TABLE `sells` ENABLE KEYS */;
-UNLOCK TABLES;
+UNLOCK
+TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

@@ -22,18 +22,19 @@
 DROP TABLE IF EXISTS `order`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `order` (
-  `code` int NOT NULL,
-  `total_amount` int NOT NULL,
-  `shipping_date` date NOT NULL,
-  `shipping_address` varchar(128) NOT NULL,
-  `supplier_code` int NOT NULL,
-  `user_id` int NOT NULL,
-  PRIMARY KEY (`code`),
-  KEY `supplier_code_idx` (`supplier_code`),
-  KEY `user_id_idx` (`user_id`),
-  CONSTRAINT `supplier_code` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`) ON UPDATE CASCADE,
-  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON UPDATE CASCADE
+CREATE TABLE `order`
+(
+    `code`             int          NOT NULL,
+    `total_amount`     int          NOT NULL,
+    `shipping_date`    date         NOT NULL,
+    `shipping_address` varchar(128) NOT NULL,
+    `supplier_code`    int          NOT NULL,
+    `user_id`          int          NOT NULL,
+    PRIMARY KEY (`code`),
+    KEY                `supplier_code_idx` (`supplier_code`),
+    KEY                `user_id_idx` (`user_id`),
+    CONSTRAINT `supplier_code` FOREIGN KEY (`supplier_code`) REFERENCES `supplier` (`code`) ON UPDATE CASCADE,
+    CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -41,10 +42,12 @@ CREATE TABLE `order` (
 -- Dumping data for table `order`
 --
 
-LOCK TABLES `order` WRITE;
+LOCK
+TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
-UNLOCK TABLES;
+UNLOCK
+TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

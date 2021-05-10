@@ -22,16 +22,17 @@
 DROP TABLE IF EXISTS `recently_viewed`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `recently_viewed` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `product_code` int NOT NULL,
-  `time` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id_idx` (`user_id`),
-  KEY `product_code_idx` (`product_code`),
-  CONSTRAINT `product_code_fk` FOREIGN KEY (`product_code`) REFERENCES `product` (`code`),
-  CONSTRAINT `user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+CREATE TABLE `recently_viewed`
+(
+    `id`           int      NOT NULL AUTO_INCREMENT,
+    `user_id`      int      NOT NULL,
+    `product_code` int      NOT NULL,
+    `time`         datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY            `user_id_idx` (`user_id`),
+    KEY            `product_code_idx` (`product_code`),
+    CONSTRAINT `product_code_fk` FOREIGN KEY (`product_code`) REFERENCES `product` (`code`),
+    CONSTRAINT `user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -39,10 +40,12 @@ CREATE TABLE `recently_viewed` (
 -- Dumping data for table `recently_viewed`
 --
 
-LOCK TABLES `recently_viewed` WRITE;
+LOCK
+TABLES `recently_viewed` WRITE;
 /*!40000 ALTER TABLE `recently_viewed` DISABLE KEYS */;
 /*!40000 ALTER TABLE `recently_viewed` ENABLE KEYS */;
-UNLOCK TABLES;
+UNLOCK
+TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
