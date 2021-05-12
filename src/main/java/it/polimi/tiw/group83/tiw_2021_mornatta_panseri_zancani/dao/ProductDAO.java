@@ -19,8 +19,7 @@ public class ProductDAO {
         this.con = connection;
     }
 
-    public Product createProductBean(ResultSet result) throws SQLException, IOException{
-        result.next();
+    public static Product createProductBean(ResultSet result) throws SQLException, IOException{
         Product product = new Product();
         product.setCode(result.getInt("code"));
         product.setName(result.getString("name"));
@@ -32,13 +31,14 @@ public class ProductDAO {
     }
 
     public Product findProductByCode(int code) throws SQLException, IOException {
-        String query = "SELECT  name, description, category, image FROM user  WHERE code = ?";
+        String query = "SELECT  * FROM product  WHERE code = ?";
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
             pstatement.setInt(1, code);
             try (ResultSet result = pstatement.executeQuery()) {
                 if (!result.isBeforeFirst()) // no results, product not found
                     return null;
                 else {
+                    result.next();
                     return createProductBean(result);
                 }
             }
@@ -46,23 +46,23 @@ public class ProductDAO {
     }
 
     public List<Product> searchForProduct(String searchQuery) throws SQLException, IOException{
-        String query = "SELECT  code, name, description, category, image FROM user" +
+        String query = "SELECT  * FROM product" +
                 " WHERE name LIKE '%?%' OR description LIKE '%?%' OR category LIKE '%?%'";
+        List<Product> searchResult = new ArrayList<>();
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
             pstatement.setString(1, searchQuery);
             pstatement.setString(2, searchQuery);
             pstatement.setString(3, searchQuery);
             try (ResultSet result = pstatement.executeQuery()) {
                 if (!result.isBeforeFirst()) // no results, product not found
-                    return null;
+                    return searchResult;
                 else {
-                    List<Product> searchResult = new ArrayList<>();
-                    while(!result.isAfterLast()) {
+                    while(result.next()) {
                         searchResult.add(createProductBean(result));
                     }
-                    return searchResult;
                 }
             }
         }
+        return searchResult;
     }
 }
