@@ -1,10 +1,13 @@
 package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans;
 
+import java.awt.*;
+
 public class Product {
     private int code;
     private String name;
     private String category;
     private String description;
+    private Image image;
 
     public int getCode() {
         return code;
@@ -36,5 +39,13 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 }
