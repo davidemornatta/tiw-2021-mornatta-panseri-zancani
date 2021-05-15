@@ -20,10 +20,10 @@ public class UserDAO {
         this.con = connection;
     }
 
-    public User checkCredentials(String usrn, String pwd) throws SQLException {
-        String query = "SELECT  id, name, surname FROM user  WHERE name = ? AND password =?";
+    public User checkCredentials(String mail, String pwd) throws SQLException {
+        String query = "SELECT  id, name, surname FROM user  WHERE email = ? AND password =?";
         try (PreparedStatement pstatement = con.prepareStatement(query);) {
-            pstatement.setString(1, usrn);
+            pstatement.setString(1, mail);
             pstatement.setString(2, pwd);
             try (ResultSet result = pstatement.executeQuery();) {
                 if (!result.isBeforeFirst()) // no results, credential check failed
@@ -47,14 +47,7 @@ public class UserDAO {
             pstatement.setInt(1, userId);
             try (ResultSet result = pstatement.executeQuery();) {
                 while (result.next()) {
-                    Product product = new Product();
-                    product.setCode(result.getInt("code"));
-                    product.setName(result.getString("name"));
-                    product.setDescription(result.getString("description"));
-                    product.setCategory(result.getString("category"));
-                    InputStream in = result.getBlob("image").getBinaryStream();
-                    product.setImage(ImageIO.read(in));
-                    products.add(product);
+                    products.add(ProductDAO.createProductBean(result));
                 }
             }
         }
