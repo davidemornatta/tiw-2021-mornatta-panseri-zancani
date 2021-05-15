@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+</head>
+<body>
+    <header th:replace="navbar :: navbar"></header>
+    <div th:each="supplier : ${supplierProducts.keySet()}">
+        <h3 th:text="${supplier}"></h3>
+        <h4 th:text="${supplierProducts.get(supplier).size()} + ' products. Total: €' + ${supplierTotals.get(supplier)}"></h4>
+        <ul class="list-group list-group-flush">
+            <li th:each="product : ${supplierProducts.get(supplier)}">
+                <span th:text="${product.name}"></span>
+            </li>
+        </ul>
+        <form action="/ProcessOrder" method="post">
+            <button name="supplier-code" th:value="${supplier}" class="btn btn-primary">Order</button>
+        </form>
+    </div>
+</body>
+</html>

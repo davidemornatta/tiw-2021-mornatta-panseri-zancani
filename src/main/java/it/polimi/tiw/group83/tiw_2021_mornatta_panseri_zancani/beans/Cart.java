@@ -22,13 +22,35 @@ public class Cart {
         return supplierProductsMap.getOrDefault(supplierCode, Collections.emptyList()).size();
     }
 
-    public int findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
+    private int findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         return supplierDAO.findProductsTotal(supplierCode, supplierProductsMap.get(supplierCode));
     }
 
-    public List<Product> findAllProductsFor(int supplierCode, Connection connection) throws IOException, SQLException {
+    private List<Product> findAllProductsFor(int supplierCode, Connection connection) throws IOException, SQLException {
         ProductDAO productDAO = new ProductDAO(connection);
         return productDAO.findAllProductsByCodes(supplierProductsMap.get(supplierCode));
+    }
+
+    public Map<String, List<Product>> findAllProducts(Connection connection) throws SQLException, IOException {
+        Map<String, List<Product>> result = new HashMap<>();
+        SupplierDAO supplierDAO = new SupplierDAO(connection);
+        for(int supplierCode : supplierProductsMap.keySet()) {
+            Supplier supplier = supplierDAO.findSupplierByCode(supplierCode);
+            List<Product> products = findAllProductsFor(supplierCode, connection);
+            result.put(supplier.getName(), products);
+        }
+        return result;
+    }
+
+    public Map<String, Integer> findAllProductTotals(Connection connection) throws SQLException {
+        Map<String, Integer> result = new HashMap<>();
+        SupplierDAO supplierDAO = new SupplierDAO(connection);
+        for(int supplierCode : supplierProductsMap.keySet()) {
+            Supplier supplier = supplierDAO.findSupplierByCode(supplierCode);
+            int total = findProductTotalFor(supplierCode, connection);
+            result.put(supplier.getName(), total);
+        }
+        return result;
     }
 }
