@@ -3,9 +3,7 @@ package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Order;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
 
-import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,14 +98,7 @@ public class OrderDAO {
                     return products;
                 else {
                     while (result.next()) {
-                        Product product = new Product();
-                        product.setCode(result.getInt("code"));
-                        product.setName(result.getString("name"));
-                        product.setDescription(result.getString("description"));
-                        product.setCategory(result.getString("category"));
-                        InputStream in = result.getBlob("image").getBinaryStream();
-                        product.setImage(ImageIO.read(in));
-                        products.put(product, result.getInt("quantity"));
+                        products.put(ProductDAO.createProductBean(result), result.getInt("quantity"));
                     }
                 }
             }

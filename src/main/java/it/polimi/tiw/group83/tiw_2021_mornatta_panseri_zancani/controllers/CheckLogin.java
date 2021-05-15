@@ -41,17 +41,17 @@ public class CheckLogin extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // obtain and escape params
-        String usrn = null;
+        String mail = null;
         String pwd = null;
         try {
-            usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
+            mail = StringEscapeUtils.escapeJava(request.getParameter("mail"));
             pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
-            if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
+            if (mail == null || pwd == null || mail.isEmpty() || pwd.isEmpty()) {
                 throw new Exception("Missing or empty credential value");
             }
 
         } catch (Exception e) {
-            // for debugging only e.printStackTrace();
+            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value");
             return;
         }
@@ -60,7 +60,7 @@ public class CheckLogin extends HttpServlet {
         UserDAO userDao = new UserDAO(connection);
         User user = null;
         try {
-            user = userDao.checkCredentials(usrn, pwd);
+            user = userDao.checkCredentials(mail, pwd);
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to check credentials");
             return;
@@ -73,7 +73,7 @@ public class CheckLogin extends HttpServlet {
         if (user == null) {
             ServletContext servletContext = getServletContext();
             final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-            ctx.setVariable("errorMsg", "Incorrect username or password");
+            ctx.setVariable("errorMsg", "Incorrect mail or password");
             path = "/index.html";
             templateEngine.process(path, ctx, response.getWriter());
         } else {
