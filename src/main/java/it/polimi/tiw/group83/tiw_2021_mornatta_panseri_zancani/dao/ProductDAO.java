@@ -65,4 +65,23 @@ public class ProductDAO {
         }
         return searchResult;
     }
+
+    public List<Product> findAllProductsByCodes(List<Integer> productCodes) throws SQLException, IOException {
+        StringBuilder sb = new StringBuilder("SELECT * FROM product WHERE code IN (");
+        productCodes.forEach(code -> sb.append("?,"));
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(")");
+        List<Product> products = new ArrayList<>();
+        try(PreparedStatement preparedStatement = con.prepareStatement(sb.toString())) {
+            for(int i = 0; i < productCodes.size(); i++) {
+                preparedStatement.setInt(i + 1, productCodes.get(i));
+            }
+            try(ResultSet result = preparedStatement.executeQuery()) {
+                while (result.next()) {
+                    products.add(createProductBean(result));
+                }
+            }
+        }
+        return products;
+    }
 }

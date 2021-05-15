@@ -1,5 +1,7 @@
 package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao;
 
+import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.PriceRange;
+import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Supplier;
 
 import java.sql.Connection;
@@ -73,5 +75,24 @@ public class SupplierDAO {
             }
         }
         return suppliers;
+    }
+
+    public int findProductsTotal(int supplierCode, List<Integer> productCodes) throws SQLException {
+        StringBuilder sb = new StringBuilder("SELECT SUM(price) FROM sells WHERE supplier_code = ? AND product_code IN (");
+        productCodes.forEach(code -> sb.append("?,"));
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(")");
+        try(PreparedStatement preparedStatement = con.prepareStatement(sb.toString())) {
+            for(int i = 0; i < productCodes.size(); i++) {
+                preparedStatement.setInt(i + 1, productCodes.get(i));
+            }
+            try(ResultSet result = preparedStatement.executeQuery()) {
+                if(!result.isBeforeFirst()) {
+                    return 0;
+                } else {
+                    return result.getInt(1);
+                }
+            }
+        }
     }
 }

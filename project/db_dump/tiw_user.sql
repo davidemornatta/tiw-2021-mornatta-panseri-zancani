@@ -22,15 +22,14 @@
 DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user`
-(
-    `id`               int          NOT NULL AUTO_INCREMENT,
-    `name`             varchar(45)  NOT NULL,
-    `surname`          varchar(45)  NOT NULL,
-    `email`            varchar(45)  NOT NULL,
-    `password`         varchar(255) NOT NULL,
-    `shipping_address` varchar(128) NOT NULL,
-    PRIMARY KEY (`id`)
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `surname` varchar(45) NOT NULL,
+  `email` varchar(45) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `shipping_address` varchar(128) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -38,12 +37,10 @@ CREATE TABLE `user`
 -- Dumping data for table `user`
 --
 
-LOCK
-TABLES `user` WRITE;
+LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK
-TABLES;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -54,4 +51,4 @@ TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-03 18:06:06
+-- Dump completed on 2021-05-15 14:41:04
