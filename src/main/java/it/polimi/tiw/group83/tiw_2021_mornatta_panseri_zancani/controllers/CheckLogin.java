@@ -39,10 +39,10 @@ public class CheckLogin extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         // obtain and escape params
-        String mail = null;
-        String pwd = null;
+        String mail;
+        String pwd;
         try {
             mail = StringEscapeUtils.escapeJava(request.getParameter("mail"));
             pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
@@ -58,7 +58,7 @@ public class CheckLogin extends HttpServlet {
 
         // query db to authenticate for user
         UserDAO userDao = new UserDAO(connection);
-        User user = null;
+        User user;
         try {
             user = userDao.checkCredentials(mail, pwd);
         } catch (SQLException e) {
