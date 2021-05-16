@@ -6,10 +6,7 @@ import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.SupplierDAO;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Cart {
     private final Map<Integer, List<Integer>> supplierProductsMap;
@@ -52,5 +49,12 @@ public class Cart {
             result.put(supplier.getName(), total);
         }
         return result;
+    }
+
+    public void addProduct(int supplierCode, int productCode) {
+        if(supplierProductsMap.containsKey(supplierCode))
+            supplierProductsMap.get(supplierCode).add(productCode);
+        else
+            supplierProductsMap.put(supplierCode, new ArrayList<>(Collections.singletonList(productCode)));
     }
 }

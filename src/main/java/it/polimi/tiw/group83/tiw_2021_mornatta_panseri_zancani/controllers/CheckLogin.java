@@ -1,5 +1,6 @@
 package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.controllers;
 
+import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Cart;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.User;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.UserDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
@@ -28,6 +29,7 @@ public class CheckLogin extends HttpServlet {
         super();
     }
 
+    @Override
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
         ServletContext servletContext = getServletContext();
@@ -38,8 +40,8 @@ public class CheckLogin extends HttpServlet {
         templateResolver.setSuffix(".html");
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // obtain and escape params
         String mail = null;
         String pwd = null;
@@ -78,12 +80,17 @@ public class CheckLogin extends HttpServlet {
             templateEngine.process(path, ctx, response.getWriter());
         } else {
             request.getSession().setAttribute("user", user);
+
+            if(request.getSession().getAttribute("cart") == null)
+                request.getSession().setAttribute("cart", new Cart());
+
             path = getServletContext().getContextPath() + "/Home";
             response.sendRedirect(path);
         }
 
     }
 
+    @Override
     public void destroy() {
         try {
             ConnectionHandler.closeConnection(connection);

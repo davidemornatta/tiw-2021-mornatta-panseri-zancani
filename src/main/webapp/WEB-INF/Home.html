@@ -7,32 +7,39 @@
   <link rel="stylesheet" type="text/css" media="all"
         href="../css/style.css" th:href="@{/css/style.css}" />
 </head>
-<body>
+<body class="pastelBlue">
 
 <header th:replace="WEB-INF/navbar :: navbar"></header>
 
-<div id="logout">
-  <a th:href="@{/Logout}">Logout</a>
+<div class="text-center">
+  <h1>Welcome to Ebazon</h1>
+  <p th:text="${'Nice to see you again ' + session.user.name + ' ' + session.user.surname}"></p>
 </div>
-<h1>Welcome to Ebazon</h1>
-<p th:text="${'Nice to see you again ' + session.user.name + ' ' + session.user.surname}"></p>
 
-<table>
-  <thead>
+<div><table class="table align-middle text-light">
+  <thead class="lightBlue">
   <tr>
-    <th>Name</th>
-    <th>Category</th>
-    <th>Description</th>
-    <th>Image</th>
+    <th scope="col">Name</th>
+    <th scope="col">Category</th>
+    <th scope="col">Description</th>
+    <th scope="col">Image</th>
   </tr>
   </thead>
-  <tbody>
+  <tbody class="table-light">
   <tr th:each="p : ${lastViewed}">
-    <td th:text="${p.getName()}"></td>
-    <td th:text="${p.getCategory()}"></td>
-    <td th:text="${p.getDescription()}"></td>
-    <td><img th:src="'data:image/png;base64,' + ${p.getImage()}" alt="Unsupported image"/></td>
+    <td class="align-content-center" th:text="${p.getName()}"></td>
+    <td class="align-content-center" th:text="${p.getCategory()}"></td>
+    <td class="align-content-center" th:text="${p.getDescription()}"></td>
+    <td><img class="img-fluid product-thumbnail img-thumbnail" th:src="'data:image/png;base64,' + ${p.getImage()}" alt="Unsupported image" src=""/></td>
   </tr>
   </tbody>
-</table>
+</table></div>
 
+<form class="col-3" action="#" th:action="@{/GoToSearchResults}" method="POST">
+  <div class="mb-3">
+    <label for="searchQuery" class="form-label">Keyword:</label>
+    <input type="text" class="form-control" id="searchQuery" aria-describedby="searchHelp">
+    <div id="searchHelp" class="form-text">Type a key word to search for related products.</div>
+  </div>
+  <button class="btn btn-primary" type="submit" name="Search">Search</button>
+</form>

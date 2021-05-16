@@ -108,7 +108,7 @@ public class SupplierDAO {
             }
             try(ResultSet result = preparedStatement.executeQuery()) {
                 if(!result.isBeforeFirst()) {
-                    return 0;
+                    return -1;
                 } else {
                     return result.getInt(1);
                 }
