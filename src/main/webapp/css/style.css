@@ -1,3 +1,16 @@
 #logout {
     align-self: start;
 }
+
+.product-thumbnail {
+    width: auto;
+    height: 200px;
+}
+
+.lightBlue {
+    background-color: #abc4ff;
+}
+
+.pastelBlue {
+    background-color: #c1d3fe;
+}
