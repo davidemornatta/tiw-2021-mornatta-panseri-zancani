@@ -63,7 +63,7 @@ public class OrderDAO {
     }
 
     public List<Order> findUserOrders(int userId) throws SQLException {
-        String query = "SELECT * FROM `order` WHERE user_id = ?";
+        String query = "SELECT * FROM `order` WHERE user_id = ? ORDER BY shipping_date DESC";
         List<Order> orders = new ArrayList<>();
         try(PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setInt(1, userId);

@@ -10,7 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProductDAO {
     private final Connection con;
@@ -65,6 +67,36 @@ public class ProductDAO {
         }
         return searchResult;
     }
+
+    public Map<Product,Integer> searchForProductOrdered(String searchQuery) throws SQLException, IOException{
+        String query = "SELECT * FROM product JOIN sells ON code = product_code" +
+                " WHERE name LIKE '%?%' OR description LIKE '%?%' OR category LIKE '%?%'"+
+                "AND price IN("+
+                "SELECT TOP 1 price" +
+                "FROM sells " +
+                "WHERE product_code = code" +
+                "ORDER BY price ASC)"+
+                "ORDER BY price ASC";
+        Map<Product,Integer> searchResult = new HashMap<>();
+        try (PreparedStatement pstatement = con.prepareStatement(query)) {
+            pstatement.setString(1, searchQuery);
+            pstatement.setString(2, searchQuery);
+            pstatement.setString(3, searchQuery);
+            try (ResultSet result = pstatement.executeQuery()) {
+                if (!result.isBeforeFirst()) // no results, product not found
+                    return null;
+                else {
+                    while(result.next()) {
+                        searchResult.put(createProductBean(result), result.findColumn("price"));
+                    }
+                }
+            }
+        }
+        return searchResult;
+    }
+
+
+
 
     public List<Product> findAllProductsByCodes(List<Integer> productCodes) throws SQLException, IOException {
         StringBuilder sb = new StringBuilder("SELECT * FROM product WHERE code IN (");
