@@ -33,6 +33,7 @@ public class GoToHome extends HttpServlet {
         super();
     }
 
+    @Override
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
         ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
@@ -43,8 +44,8 @@ public class GoToHome extends HttpServlet {
         connection = ConnectionHandler.getConnection(getServletContext());
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // If the user is not logged in (not present in session) redirect to the login
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
@@ -66,11 +67,12 @@ public class GoToHome extends HttpServlet {
         templateEngine.process(path, ctx, response.getWriter());
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doGet(request, response);
     }
 
+    @Override
     public void destroy() {
         try {
             ConnectionHandler.closeConnection(connection);
