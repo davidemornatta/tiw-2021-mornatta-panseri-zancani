@@ -19,7 +19,7 @@ public class Cart {
         return supplierProductsMap.getOrDefault(supplierCode, Collections.emptyList()).size();
     }
 
-    private int findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
+    public int findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         return supplierDAO.findProductsTotal(supplierCode, supplierProductsMap.get(supplierCode));
     }
@@ -49,6 +49,27 @@ public class Cart {
             result.put(supplier.getName(), total);
         }
         return result;
+    }
+
+    public Map<Integer, Integer> findAllProductAndQuantitiesFor(int supplierCode) {
+        Map<Integer, Integer> result = new HashMap<>();
+        List<Integer> supplierProductsCopy = new ArrayList<>(supplierProductsMap.get(supplierCode));
+        for (int i = supplierProductsCopy.size() - 1; i >= 0; i--) {
+            int quantity = 1;
+            for (int j = supplierProductsCopy.size()-2 ; j >= 0; j--) {
+                if (supplierProductsCopy.get(i).equals(supplierProductsCopy.get(j))) {
+                    quantity++;
+                    supplierProductsCopy.remove(j);
+                }
+            }
+            result.put(supplierProductsCopy.get(i), quantity);
+            supplierProductsCopy.remove(i);
+        }
+        return result;
+    }
+
+    public void removeOrderedItems(int supplier) {
+        supplierProductsMap.remove(supplier);
     }
 
     public void addProduct(int supplierCode, int productCode) {

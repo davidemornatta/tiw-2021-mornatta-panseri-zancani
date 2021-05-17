@@ -5,6 +5,7 @@ public class User {
 
     private String name;
     private String surname;
+    private String shippingAddress;
 
     public int getId() {
         return id;
@@ -30,4 +31,11 @@ public class User {
         this.surname = surname;
     }
 
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
 }

@@ -18,10 +18,9 @@ import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.User;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.UserDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
+import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.TemplateUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 @WebServlet("/Home")
 public class GoToHome extends HttpServlet {
@@ -35,12 +34,7 @@ public class GoToHome extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        ServletContext servletContext = getServletContext();
-        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        this.templateEngine = new TemplateEngine();
-        this.templateEngine.setTemplateResolver(templateResolver);
-        templateResolver.setSuffix(".html");
+        templateEngine = TemplateUtils.initTemplateEngine(getServletContext());
         connection = ConnectionHandler.getConnection(getServletContext());
     }
 
@@ -50,7 +44,7 @@ public class GoToHome extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         UserDAO userDAO = new UserDAO(connection);
-        List<Product> lastViewed = new ArrayList<>();
+        List<Product> lastViewed;
 
         try {
             lastViewed = userDAO.findLastFiveViewedBy(user.getId());
