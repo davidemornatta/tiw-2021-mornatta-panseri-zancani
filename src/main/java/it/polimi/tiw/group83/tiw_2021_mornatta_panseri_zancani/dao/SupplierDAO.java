@@ -56,25 +56,25 @@ public class SupplierDAO {
         return executeFindQuery(productCode, query);
     }
 
-    public int minPriceValue(int productCode) throws SQLException{
-        String query = "SELECT TOP 1 price" +
-                "FROM sells" +
-                "WHERE product_code = ?" +
-                "ORDER BY price ASC";
+//    public int minPriceValue(int productCode) throws SQLException{
+//        String query = "SELECT TOP 1 price " +
+//                "FROM sells " +
+//                "WHERE product_code = ? " +
+//                "ORDER BY price ASC";
 
-        try (PreparedStatement pstatement = con.prepareStatement(query)) {
-            pstatement.setInt(1, productCode);
-            try (ResultSet result = pstatement.executeQuery()) {
-                if (!result.isBeforeFirst()) // no results, product not found
-                    return 0;
-                else {
-                    result.next();
-                    return result.getInt("price");
-                }
-            }
-        }
-
-    }
+//        try (PreparedStatement pstatement = con.prepareStatement(query)) {
+//            pstatement.setInt(1, productCode);
+//            try (ResultSet result = pstatement.executeQuery()) {
+//                if (!result.isBeforeFirst()) // no results, product not found
+//                    return 0;
+//                else {
+//                    result.next();
+//                    return result.getInt("price");
+//                }
+//            }
+//        }
+//
+//    }
 
     public List<Supplier> findAllSuppliers(int productCode) throws SQLException {
         String query = "SELECT  * " +

@@ -69,13 +69,8 @@ public class ProductDAO {
     }
 
     public Map<Product,Integer> searchForProductOrdered(String searchQuery) throws SQLException, IOException{
-        String query = "SELECT * FROM product JOIN sells ON code = product_code" +
-                " WHERE name LIKE '%?%' OR description LIKE '%?%' OR category LIKE '%?%'"+
-                "AND price IN("+
-                "SELECT TOP 1 price" +
-                "FROM sells " +
-                "WHERE product_code = code" +
-                "ORDER BY price ASC)"+
+        String query = "SELECT * FROM product JOIN sells ON code = product_code " +
+                " WHERE name LIKE '%?%' OR description LIKE '%?%' OR category LIKE '%?%'" +
                 "ORDER BY price ASC";
         Map<Product,Integer> searchResult = new HashMap<>();
         try (PreparedStatement pstatement = con.prepareStatement(query)) {

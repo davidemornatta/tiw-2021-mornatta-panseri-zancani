@@ -3,6 +3,7 @@ package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.controllers;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.*;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.*;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
+import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.TemplateUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -28,11 +30,7 @@ public class GoToSearchResults extends HttpServlet {
 
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
-        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        this.templateEngine = new TemplateEngine();
-        this.templateEngine.setTemplateResolver(templateResolver);
-        templateResolver.setSuffix(".html");
+        TemplateEngine templateEngine = TemplateUtils.initTemplateEngine(getServletContext());
         connection = ConnectionHandler.getConnection(getServletContext());
     }
 
@@ -40,7 +38,7 @@ public class GoToSearchResults extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        int selectedCode = Integer.parseInt(null);
+        int selectedCode = 0;
         String searchQuery = request.getParameter("searchQuery");
         try {
              selectedCode = Integer.parseInt(request.getParameter("selectedCode"));
@@ -79,15 +77,14 @@ public class GoToSearchResults extends HttpServlet {
                 PriceRangeDAO priceRangeDAO = new PriceRangeDAO(connection);
                 for(Supplier s: suppliers){
                     int quantity = cart.findProductQuantityFor(s.getCode());
-                    //Serve metodo in cart
-                   // int total = cart.findProductTotalFor(s.getCode(),connection);
+                     int total = cart.findProductTotalFor(s.getCode(),connection);
                     List<PriceRange> priceRanges= priceRangeDAO.findPriceRangesForSupplier(s.getCode());
                     totalQuantity.put(s,quantity);
-                   // totalAmount.put(s,total);
+                    totalAmount.put(s,total);
                     ranges.put(s,priceRanges);
                 }
                 UserDAO userDAO= new UserDAO(connection);
-                userDAO.addViewToProductFrom(user.getId(), selectedCode, (java.sql.Date) new Date(System.currentTimeMillis()));
+                userDAO.addViewToProductFrom(user.getId(), selectedCode, new Date(System.currentTimeMillis()));
 
 
             } catch (SQLException throwables) {

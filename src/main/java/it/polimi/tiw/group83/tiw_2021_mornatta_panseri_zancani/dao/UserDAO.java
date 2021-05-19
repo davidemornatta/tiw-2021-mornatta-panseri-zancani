@@ -67,8 +67,14 @@ public class UserDAO {
         if(i == 0)
             throw  new SQLException();
 
-        String delete = "DELETE FROM recently_viewed ORDER BY time DESC LIMIT 1";
+
+        String delete = "DELETE FROM recently_viewed " +
+                "WHERE id IN " +
+                "(SELECT id FROM recently_viewed " +
+                "WHERE user_id = ? GROUP BY(user_id) HAVING COUNT(*)>=5 " +
+                "ORDER BY time DESC LIMIT 1 ) ";
         try (PreparedStatement p = con.prepareStatement(delete);){
+            p.setInt(1,userId);
             i=p.executeUpdate();
         }
         if(i==0){
