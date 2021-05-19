@@ -68,11 +68,11 @@ public class ProductDAO {
         return searchResult;
     }
 
-    public Map<Product,Integer> searchForProductOrdered(String searchQuery) throws SQLException, IOException {
+    public Map<Product, Float> searchForProductOrdered(String searchQuery) throws SQLException, IOException {
         String query = "SELECT * FROM product JOIN sells ON code = product_code " +
                 " WHERE name LIKE ? OR description LIKE ? OR category LIKE ?" +
                 "ORDER BY price ASC";
-        Map<Product,Integer> searchResult = new HashMap<>();
+        Map<Product, Float> searchResult = new HashMap<>();
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
             pstatement.setString(1, "%" + searchQuery + "%");
             pstatement.setString(2, "%" + searchQuery + "%");
@@ -82,7 +82,7 @@ public class ProductDAO {
                     return new HashMap<>();
                 else {
                     while(result.next()) {
-                        searchResult.put(createProductBean(result), result.findColumn("price"));
+                        searchResult.put(createProductBean(result), result.getFloat("price"));
                     }
                 }
             }

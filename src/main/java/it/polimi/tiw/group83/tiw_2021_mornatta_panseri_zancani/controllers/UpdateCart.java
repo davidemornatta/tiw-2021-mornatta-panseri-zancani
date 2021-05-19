@@ -55,6 +55,7 @@ public class UpdateCart extends HttpServlet {
                 return;
             }
         } catch (SQLException | IOException e) {
+            e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Db error");
             return;
         }
@@ -73,6 +74,7 @@ public class UpdateCart extends HttpServlet {
                 return;
             }
         } catch (SQLException | IOException e) {
+            e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Db error");
             return;
         }
@@ -83,6 +85,7 @@ public class UpdateCart extends HttpServlet {
                 return;
             }
         } catch (SQLException | IOException e) {
+            e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Db error");
             return;
         }

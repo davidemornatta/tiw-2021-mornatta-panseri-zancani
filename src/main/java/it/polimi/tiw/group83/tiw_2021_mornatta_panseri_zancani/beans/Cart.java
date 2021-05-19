@@ -21,7 +21,9 @@ public class Cart {
 
     public int findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
         SupplierDAO supplierDAO = new SupplierDAO(connection);
-        int total = supplierDAO.findProductsTotal(supplierCode, supplierProductsMap.get(supplierCode));
+        int total = 0;
+        if(supplierProductsMap.containsKey(supplierCode))
+            total = supplierDAO.findProductsTotal(supplierCode, supplierProductsMap.get(supplierCode));
         return total != -1 ? total : 0;
     }
 

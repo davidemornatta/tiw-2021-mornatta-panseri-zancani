@@ -22,7 +22,7 @@
                 <form action="GoToSearchResults" method="get">
                     <input type="hidden" name="searchQuery" th:value="${param.get('searchQuery')}">
                     <input type="hidden" name="selectedCode" th:value="${product.code}">
-                    <button class="btn btn-primary" type="submit" name="Search">View Details</button>
+                    <button class="btn btn-primary" type="submit">View Details</button>
                 </form>
             </li>
         </ul>
@@ -82,8 +82,9 @@
                         <input type="hidden" name="supplierCode" th:value="${supplier.code}">
                         <label>
                             Quantity:
-                            <input type="number" name="quantity" min="0">
+                            <input type="number" name="quantity" min="0" value="1">
                         </label>
+                        <button type="submit" class="btn">Add to Cart</button>
                     </form>
                 </td>
             </tr>

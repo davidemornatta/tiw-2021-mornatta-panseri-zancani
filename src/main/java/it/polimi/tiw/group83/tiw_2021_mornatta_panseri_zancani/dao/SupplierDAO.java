@@ -1,7 +1,5 @@
 package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao;
 
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.PriceRange;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Supplier;
 
 import java.sql.Connection;
@@ -109,6 +107,7 @@ public class SupplierDAO {
                 if(!result.isBeforeFirst()) {
                     return -1;
                 } else {
+                    result.next();
                     return result.getInt(1);
                 }
             }
