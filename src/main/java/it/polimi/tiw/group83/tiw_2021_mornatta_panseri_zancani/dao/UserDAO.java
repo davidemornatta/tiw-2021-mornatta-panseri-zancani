@@ -3,9 +3,7 @@ package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.User;
 
-import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

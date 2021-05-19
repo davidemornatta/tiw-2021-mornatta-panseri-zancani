@@ -28,4 +28,11 @@ public class PriceRange {
     public void setShippingCost(float shippingCost) {
         this.shippingCost = shippingCost;
     }
+
+    @Override
+    public String toString() {
+        return  "minArticles=" + minArticles +
+                ", maxArticles=" + maxArticles +
+                ", shippingCost=" + shippingCost;
+    }
 }

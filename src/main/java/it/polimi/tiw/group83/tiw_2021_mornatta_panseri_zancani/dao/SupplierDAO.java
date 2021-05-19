@@ -85,9 +85,7 @@ public class SupplierDAO {
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
             pstatement.setInt(1, productCode);
             try (ResultSet result = pstatement.executeQuery()) {
-                if (!result.isBeforeFirst()) // no results, product not found
-                    return suppliers;
-                else {
+                if (result.isBeforeFirst()) {
                     while (result.next()) {
                         suppliers.add(createSupplierBean(result));
                     }
@@ -103,8 +101,9 @@ public class SupplierDAO {
         sb.deleteCharAt(sb.length() - 1);
         sb.append(")");
         try(PreparedStatement preparedStatement = con.prepareStatement(sb.toString())) {
+            preparedStatement.setInt(1, supplierCode);
             for(int i = 0; i < productCodes.size(); i++) {
-                preparedStatement.setInt(i + 1, productCodes.get(i));
+                preparedStatement.setInt(i + 2, productCodes.get(i));
             }
             try(ResultSet result = preparedStatement.executeQuery()) {
                 if(!result.isBeforeFirst()) {

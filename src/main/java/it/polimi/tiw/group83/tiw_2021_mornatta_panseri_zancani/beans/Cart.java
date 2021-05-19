@@ -21,7 +21,8 @@ public class Cart {
 
     public int findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
         SupplierDAO supplierDAO = new SupplierDAO(connection);
-        return supplierDAO.findProductsTotal(supplierCode, supplierProductsMap.get(supplierCode));
+        int total = supplierDAO.findProductsTotal(supplierCode, supplierProductsMap.get(supplierCode));
+        return total != -1 ? total : 0;
     }
 
     private List<Product> findAllProductsFor(int supplierCode, Connection connection) throws IOException, SQLException {
@@ -77,5 +78,20 @@ public class Cart {
             supplierProductsMap.get(supplierCode).add(productCode);
         else
             supplierProductsMap.put(supplierCode, new ArrayList<>(Collections.singletonList(productCode)));
+    }
+
+    public void checkValidity(Connection con) throws SQLException {
+        ProductDAO productDAO = new ProductDAO(con);
+        for (Map.Entry<Integer, List<Integer>> entry : supplierProductsMap.entrySet()) {
+            Integer supplier = entry.getKey();
+            List<Integer> products = entry.getValue();
+            Iterator<Integer> iterator = products.listIterator();
+            int productCode;
+            while (iterator.hasNext()) {
+                productCode = iterator.next();
+                if (!productDAO.isProductSoldBy(productCode, supplier))
+                    iterator.remove();
+            }
+        }
     }
 }

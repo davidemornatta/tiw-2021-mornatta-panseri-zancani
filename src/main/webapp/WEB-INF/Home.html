@@ -42,13 +42,15 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-6">
-            <form action="#" th:action="@{/GoToSearchResults}" method="POST">
+            <form action="#" th:action="@{/GoToSearchResults}" method="get">
                 <div class="mb-3">
-                    <label for="searchQuery" class="form-label">Keyword:</label>
-                    <input type="text" class="form-control" id="searchQuery" aria-describedby="searchHelp">
+                    <label class="form-label">Keyword:
+                      <input type="text" class="form-control" name="searchQuery" aria-describedby="searchHelp">
+                    </label>
+
                     <div id="searchHelp" class="form-text">Type a key word to search for related products.</div>
                 </div>
-                <button class="btn btn-outline-primary" type="submit" name="Search">Search</button>
+                <button class="btn btn-outline-primary" type="submit">Search</button>
             </form>
         </div>
     </div>
