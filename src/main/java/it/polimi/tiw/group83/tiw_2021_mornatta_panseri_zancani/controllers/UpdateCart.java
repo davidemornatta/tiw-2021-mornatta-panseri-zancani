@@ -32,14 +32,6 @@ public class UpdateCart extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
-        if(session == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No session found");
-            return;
-        }
-        if(session.getAttribute("cart") == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No cart in session");
-            return;
-        }
         if(req.getParameter("productCode") == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing productCode parameter");
             return;

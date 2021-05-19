@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../css/style.css" th:href="@{/css/style.css}" />
+</head>
+<body>
+    <header th:replace="WEB-INF/navbar :: navbar"></header>
+    <div>
+        <h3>Search Results:</h3>
+        <ul class="list-group list-group-flush">
+            <li  th:each="product : ${products.keySet()}">
+                Code: <span th:text="${product.code}"></span>
+                <br>
+                Name: <span th:text="${product.name}"></span>
+                <br>
+                Minimum price: <span th:text="${products.get(product)}"></span>
+                <br>
+                <form action="GoToSearchResults" method="get">
+                    <input type="hidden" name="searchQuery" th:value="${param.get('searchQuery')}">
+                    <input type="hidden" name="selectedCode" th:value="${product.code}">
+                    <button class="btn btn-primary" type="submit" name="Search">View Details</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <div th:if="${isProductSelected}">
+        <h3>Product Details:</h3>
+
+        <table class="table align-middle text-light">
+            <thead class="lightBlue">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Description</th>
+                <th scope="col">Image</th>
+            </tr>
+            </thead>
+            <tbody class="table-light">
+            <tr>
+                <td class="align-content-center" th:text="${selectedProduct.getName()}"></td>
+                <td class="align-content-center" th:text="${selectedProduct.getCategory()}"></td>
+                <td class="align-content-center" th:text="${selectedProduct.getDescription()}"></td>
+                <td><img class="img-fluid product-thumbnail img-thumbnail" th:src="'data:image/png;base64,' + ${selectedProduct.getImage()}" alt="Unsupported image" src=""/></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h4>All Suppliers:</h4>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Rating</th>
+                <th>Price</th>
+                <th>Shipping Costs</th>
+                <th>Min amount for free shipping</th>
+                <th>Products already in cart</th>
+                <th>Total amount for products already in cart</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="supplier : ${supplierRanges.keySet()}">
+                <td th:text="${supplier.name}"></td>
+                <td th:text="${supplier.rating}"></td>
+                <td th:text="${supplierPrice.get(supplier)}"></td>
+                <td>
+                    <ul class="list-group list-group-flush">
+                        <li th:each="range : ${supplierRanges.get(supplier)}" th:text="${range.toString()}"></li>
+                    </ul>
+                </td>
+                <td th:text="${supplier.freeShippingCost}"></td>
+                <td th:text="${supplierQuantity.get(supplier)}"></td>
+                <td th:text="${supplierTot.get(supplier)}"></td>
+                <td>
+                    <form action="UpdateCart" method="post">
+                        <input type="hidden" name="productCode" th:value="${selectedProduct.code}">
+                        <input type="hidden" name="supplierCode" th:value="${supplier.code}">
+                        <label>
+                            Quantity:
+                            <input type="number" name="quantity" min="0">
+                        </label>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

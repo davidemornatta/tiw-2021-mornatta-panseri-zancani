@@ -68,18 +68,18 @@ public class ProductDAO {
         return searchResult;
     }
 
-    public Map<Product,Integer> searchForProductOrdered(String searchQuery) throws SQLException, IOException{
+    public Map<Product,Integer> searchForProductOrdered(String searchQuery) throws SQLException, IOException {
         String query = "SELECT * FROM product JOIN sells ON code = product_code " +
-                " WHERE name LIKE '%?%' OR description LIKE '%?%' OR category LIKE '%?%'" +
+                " WHERE name LIKE ? OR description LIKE ? OR category LIKE ?" +
                 "ORDER BY price ASC";
         Map<Product,Integer> searchResult = new HashMap<>();
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
-            pstatement.setString(1, searchQuery);
-            pstatement.setString(2, searchQuery);
-            pstatement.setString(3, searchQuery);
+            pstatement.setString(1, "%" + searchQuery + "%");
+            pstatement.setString(2, "%" + searchQuery + "%");
+            pstatement.setString(3, "%" + searchQuery + "%");
             try (ResultSet result = pstatement.executeQuery()) {
                 if (!result.isBeforeFirst()) // no results, product not found
-                    return null;
+                    return new HashMap<>();
                 else {
                     while(result.next()) {
                         searchResult.put(createProductBean(result), result.findColumn("price"));
@@ -110,5 +110,32 @@ public class ProductDAO {
             }
         }
         return products;
+    }
+
+    public boolean isProductSoldBy(int productCode, int supplierCode) throws SQLException {
+        String query = "SELECT product_code FROM sells WHERE product_code = ? AND supplier_code = ?";
+        try(PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setInt(1, productCode);
+            preparedStatement.setInt(2, supplierCode);
+            try(ResultSet result = preparedStatement.executeQuery()) {
+                return result.isBeforeFirst();
+            }
+        }
+    }
+
+    public float getProductPriceFor(int productCode, int supplierCode) throws SQLException {
+        String query = "SELECT price FROM sells WHERE product_code = ? AND supplier_code = ?";
+        try(PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setInt(1, productCode);
+            preparedStatement.setInt(2, supplierCode);
+            try(ResultSet result = preparedStatement.executeQuery()) {
+               if(!result.isBeforeFirst()) {
+                   return -1;
+               } else {
+                   result.next();
+                   return result.getInt("price");
+               }
+            }
+        }
     }
 }

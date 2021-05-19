@@ -24,86 +24,105 @@ import java.util.*;
 
 @WebServlet("/GoToSearchResults")
 public class GoToSearchResults extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-    private Connection connection = null;
+    private Connection connection;
     private TemplateEngine templateEngine;
 
+    @Override
     public void init() throws ServletException {
-        ServletContext servletContext = getServletContext();
-        TemplateEngine templateEngine = TemplateUtils.initTemplateEngine(getServletContext());
+        templateEngine = TemplateUtils.initTemplateEngine(getServletContext());
         connection = ConnectionHandler.getConnection(getServletContext());
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        int selectedCode = 0;
         String searchQuery = request.getParameter("searchQuery");
-        try {
-             selectedCode = Integer.parseInt(request.getParameter("selectedCode"));
-        }catch(Exception e){
-
+        if (searchQuery == null || searchQuery.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No search query given");
+            return;
         }
+
         ProductDAO productDAO = new ProductDAO(connection);
-        Map<Product,Integer> products = new HashMap<>();
-        List<Supplier> suppliers= new ArrayList<>();
-        Map<Supplier,List<PriceRange>> ranges = new HashMap<>();
-        Map<Supplier, Integer> totalQuantity = new HashMap<>();
-        Map<Supplier, Integer> totalAmount = new HashMap<>();
-        Cart cart = (Cart)session.getAttribute("cart");
-
-
-        if (searchQuery != null || searchQuery.isEmpty()) {
-            try {
-                throw new Exception("Missing or empty credential value");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        else {
-            try {
-                products = productDAO.searchForProductOrdered(searchQuery);
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-
+        Map<Product, Integer> products;
+        try {
+            products = productDAO.searchForProductOrdered(searchQuery);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
         }
 
-        if(selectedCode!=0){
-            SupplierDAO supplierDAO = new SupplierDAO(connection);
-            try {
-                suppliers = supplierDAO.findAllSuppliers(selectedCode);
-                PriceRangeDAO priceRangeDAO = new PriceRangeDAO(connection);
-                for(Supplier s: suppliers){
-                    int quantity = cart.findProductQuantityFor(s.getCode());
-                     int total = cart.findProductTotalFor(s.getCode(),connection);
-                    List<PriceRange> priceRanges= priceRangeDAO.findPriceRangesForSupplier(s.getCode());
-                    totalQuantity.put(s,quantity);
-                    totalAmount.put(s,total);
-                    ranges.put(s,priceRanges);
-                }
-                UserDAO userDAO= new UserDAO(connection);
-                userDAO.addViewToProductFrom(user.getId(), selectedCode, new Date(System.currentTimeMillis()));
-
-
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-
-        }
-
-        String path = "/WEB-INF/SearchResults.html";
+        String path = "/WEB-INF/search.html";
         ServletContext servletContext = getServletContext();
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
         ctx.setVariable("products", products);
-        ctx.setVariable("supplierRanges",ranges);
-        ctx.setVariable("supplierQuantity",totalQuantity);
-        ctx.setVariable("supplierTot",totalAmount);
+
+        String selectedCode = request.getParameter("selectedCode");
+        boolean isProductSelected = false;
+        if(selectedCode != null) {
+            int productCode;
+            try {
+                productCode = Integer.parseInt(selectedCode);
+            } catch (Exception e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Given selectedCode is not a number");
+                return;
+            }
+
+            Product selectedProduct;
+            try {
+                selectedProduct = productDAO.findProductByCode(productCode);
+                if(selectedProduct == null)
+                    throw new RuntimeException();
+            } catch (Exception e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Cannot find product with given code");
+                return;
+            }
+
+            List<Supplier> suppliers;
+            Map<Supplier, Float> supplierPrice = new HashMap<>();
+            Map<Supplier, List<PriceRange>> ranges = new HashMap<>();
+            Map<Supplier, Integer> totalQuantity = new HashMap<>();
+            Map<Supplier, Integer> totalAmount = new HashMap<>();
+            Cart cart = (Cart) session.getAttribute("cart");
+
+            SupplierDAO supplierDAO = new SupplierDAO(connection);
+            try {
+                suppliers = supplierDAO.findAllSuppliers(productCode);
+
+                PriceRangeDAO priceRangeDAO = new PriceRangeDAO(connection);
+                for (Supplier s : suppliers) {
+                    float price = productDAO.getProductPriceFor(productCode, s.getCode());
+                    supplierPrice.put(s, price);
+
+                    int quantity = cart.findProductQuantityFor(s.getCode());
+                    totalQuantity.put(s, quantity);
+
+                    int total = cart.findProductTotalFor(s.getCode(), connection);
+                    totalAmount.put(s, total);
+
+                    List<PriceRange> priceRanges = priceRangeDAO.findPriceRangesForSupplier(s.getCode());
+                    ranges.put(s, priceRanges);
+                }
+
+                UserDAO userDAO = new UserDAO(connection);
+                userDAO.addViewToProductFrom(user.getId(), productCode, new Date(System.currentTimeMillis()));
+            } catch (SQLException e) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to load product details");
+                return;
+            }
+
+            ctx.setVariable("selectedProduct", selectedProduct);
+            ctx.setVariable("supplierPrice", supplierPrice);
+            ctx.setVariable("supplierRanges", ranges);
+            ctx.setVariable("supplierQuantity", totalQuantity);
+            ctx.setVariable("supplierTot", totalAmount);
+
+            isProductSelected = true;
+        }
+        ctx.setVariable("isProductSelected", isProductSelected);
+
         templateEngine.process(path, ctx, response.getWriter());
-//    }
-
-
     }
 
 }

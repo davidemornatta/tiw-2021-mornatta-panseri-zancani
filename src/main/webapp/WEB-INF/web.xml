@@ -30,6 +30,7 @@
     <filter-mapping>
         <filter-name>LoginFilter</filter-name>
         <url-pattern>/GoToHome</url-pattern>
+        <url-pattern>/GoToSearchResults</url-pattern>
         <url-pattern>/GoToShoppingCart</url-pattern>
         <url-pattern>/ProcessOrder</url-pattern>
         <url-pattern>/UpdateCart</url-pattern>
@@ -37,6 +38,7 @@
     <filter-mapping>
         <filter-name>CartChecker</filter-name>
         <url-pattern>/GoToShoppingCart</url-pattern>
+        <url-pattern>/GoToSearchResults</url-pattern>
         <url-pattern>/ProcessOrder</url-pattern>
         <url-pattern>/UpdateCart</url-pattern>
     </filter-mapping>

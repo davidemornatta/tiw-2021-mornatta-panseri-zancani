@@ -37,14 +37,6 @@ public class GoToShoppingCart extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
-        if(session == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No session found");
-            return;
-        }
-        if(session.getAttribute("cart") == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No cart in session");
-            return;
-        }
 
         Cart cart = (Cart) session.getAttribute("cart");
         Map<String, List<Product>> supplierProducts;

@@ -23,7 +23,6 @@ import java.util.Calendar;
 @WebServlet("/ProcessOrder")
 public class ProcessOrder extends HttpServlet {
     private Connection connection;
-    private TemplateEngine templateEngine;
 
     public ProcessOrder() {
         super();
@@ -32,29 +31,22 @@ public class ProcessOrder extends HttpServlet {
     @Override
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
-        templateEngine = TemplateUtils.initTemplateEngine(getServletContext());
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
-        if(session == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No session found");
-            return;
-        }
-        if(session.getAttribute("cart") == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No cart in session");
-            return;
-        }
 
         Cart cart = (Cart) session.getAttribute("cart");
         User user = (User) session.getAttribute("user");
         String supplierCodeRaw = req.getParameter("supplier");
         int supplierCode = 0;
         try {
+            if(supplierCodeRaw == null)
+                throw new RuntimeException();
             supplierCode = Integer.parseInt(supplierCodeRaw);
-        } catch (NumberFormatException e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to process order");
+        } catch (Exception e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "No supplier code given");
             return;
         }
         OrderDAO orderDAO = new OrderDAO(connection);
