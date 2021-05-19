@@ -3,8 +3,8 @@
 }
 
 .product-thumbnail {
-    width: auto;
-    height: 200px;
+    width: 200px;
+    height: auto;
 }
 
 .lightBlue {
@@ -13,4 +13,18 @@
 
 .pastelBlue {
     background-color: #c1d3fe;
+}
+
+.logo {
+    font-family: 'Bebas Neue', cursive;
+}
+
+.user-image {
+    width: 100%;
+    height: 10vw;
+    object-fit: contain;
+}
+
+.top-margin {
+    margin-top: 15px;
 }
