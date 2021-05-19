@@ -20,7 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
-@WebServlet("/SearchResults")
+@WebServlet("/GoToSearchResults")
 public class GoToSearchResults extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
