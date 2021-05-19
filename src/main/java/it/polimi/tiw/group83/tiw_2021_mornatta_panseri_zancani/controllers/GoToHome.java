@@ -49,6 +49,7 @@ public class GoToHome extends HttpServlet {
         try {
             lastViewed = userDAO.findLastFiveViewedBy(user.getId());
         } catch (SQLException e) {
+            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover last five viewed products");
             return;
         }
