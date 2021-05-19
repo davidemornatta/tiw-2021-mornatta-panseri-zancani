@@ -22,7 +22,7 @@ import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.TemplateUti
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-@WebServlet("/Home")
+@WebServlet("/GoToHome")
 public class GoToHome extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private TemplateEngine templateEngine;

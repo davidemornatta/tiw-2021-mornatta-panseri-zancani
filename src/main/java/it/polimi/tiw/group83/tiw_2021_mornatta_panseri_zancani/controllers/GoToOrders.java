@@ -5,10 +5,9 @@ import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.User;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.OrderDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
+import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.TemplateUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,37 +18,31 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/Orders")
+@WebServlet("/GoToOrders")
 public class GoToOrders extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
     private TemplateEngine templateEngine;
 
     public void init() throws ServletException {
-        ServletContext servletContext = getServletContext();
-        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        this.templateEngine = new TemplateEngine();
-        this.templateEngine.setTemplateResolver(templateResolver);
-        templateResolver.setSuffix(".html");
+        templateEngine = TemplateUtils.initTemplateEngine(getServletContext());
         connection = ConnectionHandler.getConnection(getServletContext());
     }
 
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
         OrderDAO orderDAO = new OrderDAO(connection);
-        List<Order> orders = new ArrayList<Order>();
-        Map<Product, Integer> products = new HashMap<>();
-        Map<Order,Map> orderProducts = new HashMap<>();
+        List<Order> orders;
+        Map<Product, Integer> products;
+        Map<Order,Map<Product, Integer>> orderProducts = new HashMap<>();
 
 
         try {

@@ -84,7 +84,7 @@ public class CheckLogin extends HttpServlet {
             if(request.getSession().getAttribute("cart") == null)
                 request.getSession().setAttribute("cart", new Cart());
 
-            path = getServletContext().getContextPath() + "/Home";
+            path = getServletContext().getContextPath() + "/GoToHome";
             response.sendRedirect(path);
         }
 
