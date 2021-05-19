@@ -40,7 +40,7 @@ public class UserDAO {
 
     public List<Product> findLastFiveViewedBy(int userId) throws SQLException, IOException {
         List<Product> products = new ArrayList<Product>();
-        String query = "SELECT * from product JOIN recently_viewed ON code = product_code WHERE user_id = ?";
+        String query = "SELECT  * FROM product JOIN recently_viewed ON code = product_code WHERE user_id = ? LIMIT 5";
         try (PreparedStatement pstatement = con.prepareStatement(query);) {
             pstatement.setInt(1, userId);
             try (ResultSet result = pstatement.executeQuery();) {
@@ -64,21 +64,6 @@ public class UserDAO {
         }
         if(i == 0)
             throw  new SQLException();
-
-
-        String delete = "DELETE FROM recently_viewed " +
-                "WHERE id IN " +
-                "(SELECT id FROM recently_viewed " +
-                "WHERE user_id = ? GROUP BY(user_id) HAVING COUNT(*)>=5 " +
-                "ORDER BY time DESC LIMIT 1 ) ";
-        try (PreparedStatement p = con.prepareStatement(delete);){
-            p.setInt(1,userId);
-            i=p.executeUpdate();
-        }
-        if(i==0){
-            con.rollback();
-            throw new SQLException();
-        }
         con.commit();
     }
 }

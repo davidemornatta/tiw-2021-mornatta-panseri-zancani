@@ -45,7 +45,7 @@ public class GoToSearchResults extends HttpServlet {
         }
 
         ProductDAO productDAO = new ProductDAO(connection);
-        Map<Product, Integer> products;
+        Map<Product, Float> products;
         try {
             products = productDAO.searchForProductOrdered(searchQuery);
         } catch (SQLException e) {
@@ -108,6 +108,7 @@ public class GoToSearchResults extends HttpServlet {
                 UserDAO userDAO = new UserDAO(connection);
                 userDAO.addViewToProductFrom(user.getId(), productCode, new Date(System.currentTimeMillis()));
             } catch (SQLException e) {
+                e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to load product details");
                 return;
             }
