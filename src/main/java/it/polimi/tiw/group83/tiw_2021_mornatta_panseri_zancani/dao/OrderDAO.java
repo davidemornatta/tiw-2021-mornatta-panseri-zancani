@@ -80,6 +80,7 @@ public class OrderDAO {
                         order.setShippingAddress(result.getString("shipping_address"));
                         order.setSupplierCode(result.getInt("supplier_code"));
                         order.setUserId(result.getInt("user_id"));
+                        orders.add(order);
                     }
                 }
             }
