@@ -38,29 +38,27 @@ public class GoToSearchResults extends HttpServlet {
             throws IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        String searchQuery = request.getParameter("searchQuery");
-        if (searchQuery == null || searchQuery.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No search query given");
-            return;
-        }
 
         ProductDAO productDAO = new ProductDAO(connection);
-        Map<Product, Float> products;
-        try {
-            products = productDAO.searchForProductOrdered(searchQuery);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return;
-        }
-
         String path = "/WEB-INF/search.html";
         ServletContext servletContext = getServletContext();
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+
+        String searchQuery = request.getParameter("searchQuery");
+        Map<Product, Float> products = new HashMap<>();
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            try {
+                products = productDAO.searchForProductOrdered(searchQuery);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
         ctx.setVariable("products", products);
 
         String selectedCode = request.getParameter("selectedCode");
         boolean isProductSelected = false;
-        if(selectedCode != null) {
+        if(selectedCode != null && !selectedCode.isEmpty()) {
             int productCode;
             try {
                 productCode = Integer.parseInt(selectedCode);
