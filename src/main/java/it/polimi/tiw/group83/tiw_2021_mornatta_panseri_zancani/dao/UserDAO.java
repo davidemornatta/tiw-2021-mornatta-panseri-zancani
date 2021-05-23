@@ -38,7 +38,9 @@ public class UserDAO {
 
     public List<Product> findLastFiveViewedBy(int userId) throws SQLException, IOException {
         List<Product> products = new ArrayList<>();
-        String query = "SELECT  * FROM product JOIN recently_viewed ON code = product_code WHERE user_id = ? ORDER BY 'time' LIMIT 5";
+        String query = "SELECT code, name, description, category, image, timestamp(time) AS t " +
+                "FROM product JOIN recently_viewed ON code = product_code WHERE user_id = ?" +
+                " ORDER BY t DESC LIMIT 5";
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
             pstatement.setInt(1, userId);
             try (ResultSet result = pstatement.executeQuery()) {
