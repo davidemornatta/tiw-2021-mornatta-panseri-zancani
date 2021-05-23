@@ -16,7 +16,7 @@ public class UserDAO {
     }
 
     public User checkCredentials(String mail, String pwd) throws SQLException {
-        String query = "SELECT  id, name, surname FROM user  WHERE email = ? AND password =?";
+        String query = "SELECT  id, name, surname, shipping_address FROM user  WHERE email = ? AND password =?";
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
             pstatement.setString(1, mail);
             pstatement.setString(2, pwd);
@@ -29,6 +29,7 @@ public class UserDAO {
                     user.setId(result.getInt("id"));
                     user.setName(result.getString("name"));
                     user.setSurname(result.getString("surname"));
+                    user.setShippingAddress(result.getString("shipping_address"));
                     return user;
                 }
             }

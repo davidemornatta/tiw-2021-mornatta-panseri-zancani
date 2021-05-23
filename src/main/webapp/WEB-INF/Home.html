@@ -29,7 +29,12 @@
         </thead>
         <tbody class="table-light">
         <tr th:each="p : ${lastViewed}">
-            <td class="align-content-center" th:text="${p.getName()}"></td>
+            <td class="align-content-center">
+                <form action="GoToSearchResults" method="get">
+                    <input type="hidden" name="selectedCode" th:value="${p.code}">
+                    <button class="btn btn-outline-primary" type="submit" th:text="${p.getName()}"></button>
+                </form>
+            </td>
             <td class="align-content-center" th:text="${p.getCategory()}"></td>
             <td class="align-content-center" th:text="${p.getDescription()}"></td>
             <td><img class="img-fluid product-thumbnail img-thumbnail"

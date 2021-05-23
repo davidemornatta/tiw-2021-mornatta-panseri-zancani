@@ -9,7 +9,7 @@
 </head>
 <body>
     <header th:replace="WEB-INF/navbar :: navbar"></header>
-    <div>
+    <div th:if="${!products.isEmpty()}">
         <h3>Search Results:</h3>
         <ul class="list-group list-group-flush">
             <li  th:each="product : ${products.keySet()}">

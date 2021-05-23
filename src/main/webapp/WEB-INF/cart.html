@@ -11,14 +11,16 @@
     <header th:replace="WEB-INF/navbar :: navbar"></header>
     <div th:each="supplier : ${supplierProducts.keySet()}">
         <h3 th:text="${supplier}"></h3>
-        <h4 th:text="${supplierProducts.get(supplier).size()} + ' products. Total: EUR ' + ${supplierTotals.get(supplier)}"></h4>
+        <h4 th:text="${supplierQuantities.get(supplier)} + ' products. Total: EUR ' + ${supplierTotals.get(supplier)}"></h4>
         <ul class="list-group list-group-flush">
-            <li th:each="product : ${supplierProducts.get(supplier)}">
+            <li th:each="product : ${supplierProducts.get(supplier).keySet()}">
                 <span th:text="${product.name}"></span>
+                <span th:text="${supplierProducts.get(supplier).get(product)}"></span>
             </li>
         </ul>
-        <form action="/ProcessOrder" method="post">
-            <button name="supplier-code" th:value="${supplier}" class="btn btn-primary">Order</button>
+        <form action="ProcessOrder" method="post">
+            <input type="hidden" name="supplier" th:value="${supplierCodes.get(supplier)}">
+            <button class="btn btn-primary">Order</button>
         </form>
     </div>
 </body>

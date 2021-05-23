@@ -3,42 +3,53 @@ package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.ProductDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.SupplierDAO;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
 public class Cart {
-    private final Map<Integer, List<Integer>> supplierProductsMap;
+    private final Map<Integer, Map<Integer, Integer>> supplierProductsMap;
 
     public Cart() {
         supplierProductsMap = new HashMap<>();
     }
 
     public int findProductQuantityFor(int supplierCode) {
-        return supplierProductsMap.getOrDefault(supplierCode, Collections.emptyList()).size();
+        int totQuantity = 0;
+        if(supplierProductsMap.containsKey(supplierCode)) {
+            for(int quantity : supplierProductsMap.get(supplierCode).values()) {
+                totQuantity += quantity;
+            }
+        }
+        return totQuantity;
     }
 
     public int findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         int total = 0;
-        if(supplierProductsMap.containsKey(supplierCode))
-            total = supplierDAO.findProductsTotal(supplierCode, supplierProductsMap.get(supplierCode));
+        if(supplierProductsMap.containsKey(supplierCode)) {
+            total = supplierDAO.findProductsTotalWithQuantities(supplierCode, supplierProductsMap.get(supplierCode));
+        }
         return total != -1 ? total : 0;
     }
 
     private List<Product> findAllProductsFor(int supplierCode, Connection connection) throws IOException, SQLException {
         ProductDAO productDAO = new ProductDAO(connection);
-        return productDAO.findAllProductsByCodes(supplierProductsMap.get(supplierCode));
+        return productDAO.findAllProductsByCodes(new ArrayList<>(supplierProductsMap.get(supplierCode).keySet()));
     }
 
-    public Map<String, List<Product>> findAllProducts(Connection connection) throws SQLException, IOException {
-        Map<String, List<Product>> result = new HashMap<>();
+    public Map<String, Map<Product, Integer>> findAllProducts(Connection connection) throws SQLException, IOException {
+        Map<String, Map<Product, Integer>> result = new HashMap<>();
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         for(int supplierCode : supplierProductsMap.keySet()) {
             Supplier supplier = supplierDAO.findSupplierByCode(supplierCode);
             List<Product> products = findAllProductsFor(supplierCode, connection);
-            result.put(supplier.getName(), products);
+            Map<Product, Integer> productQuantities = new HashMap<>();
+            for(Product product : products)
+                productQuantities.put(product, supplierProductsMap.get(supplierCode).get(product.getCode()));
+            result.put(supplier.getName(), productQuantities);
         }
         return result;
     }
@@ -54,40 +65,41 @@ public class Cart {
         return result;
     }
 
-    public Map<Integer, Integer> findAllProductAndQuantitiesFor(int supplierCode) {
-        Map<Integer, Integer> result = new HashMap<>();
-        List<Integer> supplierProductsCopy = new ArrayList<>(supplierProductsMap.get(supplierCode));
-        for (int i = supplierProductsCopy.size() - 1; i >= 0; i--) {
-            int quantity = 1;
-            for (int j = supplierProductsCopy.size()-2 ; j >= 0; j--) {
-                if (supplierProductsCopy.get(i).equals(supplierProductsCopy.get(j))) {
-                    quantity++;
-                    supplierProductsCopy.remove(j);
-                }
-            }
-            result.put(supplierProductsCopy.get(i), quantity);
-            supplierProductsCopy.remove(i);
+    public Map<String, Integer> getAllSupplierCodes(Connection connection) throws SQLException {
+        Map<String, Integer> supplierCodes = new HashMap<>();
+        SupplierDAO supplierDAO = new SupplierDAO(connection);
+        for(int supplierCode : supplierProductsMap.keySet()) {
+            String name = supplierDAO.findSupplierByCode(supplierCode).getName();
+            supplierCodes.put(name, supplierCode);
         }
-        return result;
+        return supplierCodes;
+    }
+
+    public Map<Integer, Integer> findAllProductAndQuantitiesFor(int supplierCode) {
+        return new HashMap<>(supplierProductsMap.get(supplierCode));
     }
 
     public void removeOrderedItems(int supplier) {
         supplierProductsMap.remove(supplier);
     }
 
-    public void addProduct(int supplierCode, int productCode) {
+    public void addProduct(int supplierCode, int productCode, int quantity) {
         if(supplierProductsMap.containsKey(supplierCode))
-            supplierProductsMap.get(supplierCode).add(productCode);
+            if(supplierProductsMap.get(supplierCode).containsKey(productCode)) {
+                int prevQuantity = supplierProductsMap.get(supplierCode).get(productCode);
+                supplierProductsMap.get(supplierCode).put(productCode, quantity + prevQuantity);
+            } else
+                supplierProductsMap.get(supplierCode).put(productCode, quantity);
         else
-            supplierProductsMap.put(supplierCode, new ArrayList<>(Collections.singletonList(productCode)));
+            supplierProductsMap.put(supplierCode, new HashMap<>(Map.of(productCode, quantity)));
     }
 
     public void checkValidity(Connection con) throws SQLException {
         ProductDAO productDAO = new ProductDAO(con);
-        for (Map.Entry<Integer, List<Integer>> entry : supplierProductsMap.entrySet()) {
+        for (Map.Entry<Integer, Map<Integer, Integer>> entry : supplierProductsMap.entrySet()) {
             Integer supplier = entry.getKey();
-            List<Integer> products = entry.getValue();
-            Iterator<Integer> iterator = products.listIterator();
+            Map<Integer, Integer> productQuantities = entry.getValue();
+            Iterator<Integer> iterator = productQuantities.keySet().iterator();
             int productCode;
             while (iterator.hasNext()) {
                 productCode = iterator.next();

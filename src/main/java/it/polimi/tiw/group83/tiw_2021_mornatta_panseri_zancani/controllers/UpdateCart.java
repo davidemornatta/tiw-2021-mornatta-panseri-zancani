@@ -32,14 +32,6 @@ public class UpdateCart extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
-        if(req.getParameter("productCode") == null) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing productCode parameter");
-            return;
-        }
-        if(req.getParameter("supplierCode") == null) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing supplierCode parameter");
-            return;
-        }
 
         int productCode;
         try {
@@ -60,11 +52,19 @@ public class UpdateCart extends HttpServlet {
             return;
         }
 
+        int quantity;
+        try {
+            quantity = Integer.parseInt(req.getParameter("quantity"));
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid quantity parameter");
+            return;
+        }
+
         int supplierCode;
         try {
             supplierCode = Integer.parseInt(req.getParameter("supplierCode"));
         } catch (NumberFormatException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid productCode parameter");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid supplierCode parameter");
             return;
         }
         SupplierDAO supplierDAO = new SupplierDAO(connection);
@@ -92,7 +92,7 @@ public class UpdateCart extends HttpServlet {
 
 
         Cart cart = (Cart) session.getAttribute("cart");
-        cart.addProduct(supplierCode, productCode);
+        cart.addProduct(supplierCode, productCode, quantity);
 
         String path = getServletContext().getContextPath() + "/GoToShoppingCart";
         resp.sendRedirect(path);

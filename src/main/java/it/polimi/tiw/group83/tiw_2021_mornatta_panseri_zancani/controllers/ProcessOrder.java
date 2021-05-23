@@ -4,11 +4,7 @@ import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Cart;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.User;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.OrderDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.TemplateUtils;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,7 +30,7 @@ public class ProcessOrder extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
 
         Cart cart = (Cart) session.getAttribute("cart");
@@ -57,6 +53,7 @@ public class ProcessOrder extends HttpServlet {
                     supplierCode, user.getId(),
                     cart.findAllProductAndQuantitiesFor(supplierCode));
         } catch (SQLException e) {
+            e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to process order");
             return;
         }

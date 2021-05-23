@@ -20,7 +20,7 @@ public class OrderDAO {
     public void createOrder(float totalAmount, Date shippingDate, String shippingAddress, int supplierCode, int userId,
                             Map<Integer, Integer> productList) throws SQLException {
         con.setAutoCommit(false);
-        String query = "INSERT INTO 'order' (total_amount, shipping_date, shipping_address, supplier_code, user_id) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO `order` (total_amount, shipping_date, shipping_address, supplier_code, user_id) VALUES (?, ?, ?, ?, ?)";
         int generatedCode;
         try(PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setFloat(1, totalAmount);
@@ -37,7 +37,7 @@ public class OrderDAO {
 
             ResultSet result = preparedStatement.getGeneratedKeys();
             result.next();
-            generatedCode = result.getInt("code");
+            generatedCode = result.getInt(1);
         }
 
         StringBuilder sb = new StringBuilder("INSERT INTO order_contains (order_code, product_code, quantity) VALUES ");

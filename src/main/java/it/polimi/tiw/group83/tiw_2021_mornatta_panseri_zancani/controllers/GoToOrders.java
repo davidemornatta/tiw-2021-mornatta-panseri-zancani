@@ -24,7 +24,6 @@ import java.util.Map;
 
 @WebServlet("/GoToOrders")
 public class GoToOrders extends HttpServlet {
-    private static final long serialVersionUID = 1L;
     private Connection connection = null;
     private TemplateEngine templateEngine;
 
@@ -62,8 +61,6 @@ public class GoToOrders extends HttpServlet {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to find orders");
             return;
         }
-
-        System.out.println(orders);
 
         String path = "/WEB-INF/Orders.html";
         ServletContext servletContext = getServletContext();

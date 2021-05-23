@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SupplierDAO {
     private final Connection con;
@@ -109,6 +110,34 @@ public class SupplierDAO {
                 } else {
                     result.next();
                     return result.getInt(1);
+                }
+            }
+        }
+    }
+
+    public int findProductsTotalWithQuantities(int supplierCode, Map<Integer, Integer> productCodesAndQuantities) throws SQLException {
+        StringBuilder sb = new StringBuilder("SELECT product_code, price FROM sells WHERE supplier_code = ? AND product_code IN (");
+        productCodesAndQuantities.keySet().forEach(code -> sb.append("?,"));
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(")");
+        try(PreparedStatement preparedStatement = con.prepareStatement(sb.toString())) {
+            preparedStatement.setInt(1, supplierCode);
+            int i = 2;
+            for(int productCode : productCodesAndQuantities.keySet()) {
+                preparedStatement.setInt(i, productCode);
+                i++;
+            }
+            try(ResultSet result = preparedStatement.executeQuery()) {
+                if(!result.isBeforeFirst()) {
+                    return -1;
+                } else {
+                    int total = 0;
+                    while(result.next()) {
+                        int productCode = result.getInt(1);
+                        int price = result.getInt(2);
+                        total += price * productCodesAndQuantities.get(productCode);
+                    }
+                    return total;
                 }
             }
         }
