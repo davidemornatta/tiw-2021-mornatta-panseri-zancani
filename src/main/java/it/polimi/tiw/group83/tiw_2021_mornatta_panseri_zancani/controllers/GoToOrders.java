@@ -52,14 +52,18 @@ public class GoToOrders extends HttpServlet {
                     products = orderDAO.findAllProductsInOrder(o.getCode());
                     orderProducts.put(o,products);
                 } catch (SQLException e) {
+                    e.printStackTrace();
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to find products");
                     return;
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to find orders");
             return;
         }
+
+        System.out.println(orders);
 
         String path = "/WEB-INF/Orders.html";
         ServletContext servletContext = getServletContext();
