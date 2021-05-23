@@ -14,6 +14,7 @@ public class TemplateUtils {
         templateEngine.setTemplateResolver(templateResolver);
         templateResolver.setCharacterEncoding("UTF-8");
         templateResolver.setSuffix(".html");
+        templateResolver.setCacheable(false);
         return templateEngine;
     }
 }

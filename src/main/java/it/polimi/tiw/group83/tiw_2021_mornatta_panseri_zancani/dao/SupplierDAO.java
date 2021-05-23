@@ -77,7 +77,7 @@ public class SupplierDAO {
     public List<Supplier> findAllSuppliers(int productCode) throws SQLException {
         String query = "SELECT  * " +
                 "FROM supplier " +
-                "WHERE code = (" +
+                "WHERE code IN (" +
                 "SELECT supplier_code FROM sells WHERE product_code = ?)";
         List<Supplier> suppliers = new ArrayList<>();
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
