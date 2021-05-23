@@ -104,7 +104,7 @@ public class GoToSearchResults extends HttpServlet {
                 }
 
                 UserDAO userDAO = new UserDAO(connection);
-                userDAO.addViewToProductFrom(user.getId(), productCode, new Date(System.currentTimeMillis()));
+                userDAO.addViewToProductFrom(user.getId(), productCode, new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis()));
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to load product details");
