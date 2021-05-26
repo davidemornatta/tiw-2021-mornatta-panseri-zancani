@@ -10,9 +10,9 @@
     <meta charset="ISO-8859-1">
     <title>Login page</title>
 </head>
-<body class="pastelBlue">
+<body class="darkBlue">
 
-<div><h1 class="logo display-1">Ebazon</h1></div>
+<div><h1 class="logo display-1 text-center">Ebazon</h1></div>
 
 <div class="card container-fluid text-center bg-light text-dark" style="width: 18rem;">
     <img src="images/user.png" class="card-img-top user-image" alt="...">
@@ -21,7 +21,7 @@
         <form class="card-body" action="CheckLogin" method="POST">
             <label>E-mail: <input type="text" name="mail" required></label><br>
             <label>Password: <input type="password" name="pwd" required></label><br>
-            <button class="btn btn-outline-primary top-margin" type="submit" name="Login">Login</button>
+            <button class="btn btn-outline-secondary top-margin" type="submit" name="Login">Login</button>
             <p th:text=" ${errorMsg}"></p>
         </form>
     </div>

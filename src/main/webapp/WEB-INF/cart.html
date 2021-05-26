@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" media="all"
           href="../css/style.css" th:href="@{/css/style.css}" />
 </head>
-<body>
+<body class="darkBlue">
     <header th:replace="WEB-INF/navbar :: navbar"></header>
     <div th:each="supplier : ${supplierProducts.keySet()}">
         <h3 th:text="${supplier}"></h3>

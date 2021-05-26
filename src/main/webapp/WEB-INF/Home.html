@@ -8,16 +8,17 @@
     <link rel="stylesheet" type="text/css" media="all"
           href="../css/style.css" th:href="@{/css/style.css}"/>
 </head>
-<body class="pastelBlue">
+<body class="darkBlue">
 
 <header th:replace="WEB-INF/navbar :: navbar"></header>
 
 <div class="text-center">
-    <h1>Welcome to Ebazon</h1>
-    <p th:text="${'Nice to see you again ' + session.user.name + ' ' + session.user.surname}"></p>
+    <h1 class="logo" style="font-family: INHERIT">Welcome to EBAZON</h1>
+    <p th:text="${'Logged in as ' + session.user.name + ' ' + session.user.surname}" class="fw-bold lightGrey-text"></p>
 </div>
 
 <div>
+    <h3 class="lightGrey-text">Suggested items:</h3>
     <table class="table align-middle text-light">
         <thead class="lightBlue">
         <tr>
@@ -32,7 +33,7 @@
             <td class="align-content-center">
                 <form action="GoToSearchResults" method="get">
                     <input type="hidden" name="selectedCode" th:value="${p.code}">
-                    <button class="btn btn-outline-primary" type="submit" th:text="${p.getName()}"></button>
+                    <button class="btn btn-warning" type="submit" th:text="${p.getName()}"></button>
                 </form>
             </td>
             <td class="align-content-center" th:text="${p.getCategory()}"></td>

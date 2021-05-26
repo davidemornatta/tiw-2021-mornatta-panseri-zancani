@@ -3,21 +3,34 @@
 }
 
 .product-thumbnail {
-    height: 200px;
+    height: 100px;
     width: auto;
 }
 
-.lightBlue {
-    background-color: #abc4ff;
+.darkBlue {
+    background-color: #14213d;
 }
 
-.pastelBlue {
-    background-color: #c1d3fe;
+.orangeCustom {
+    background-color: #fca311;
+}
+
+.lightGrey {
+    background-color: #e5e5e5;
+}
+
+.navbar-blue {
+    background-color: #0a101d;
+}
+
+.lightGrey-text {
+    color: #e5e5e5;
 }
 
 .logo {
     font-family: 'Bebas Neue', cursive;
     margin-left: 10px;
+    color: #fca311;
 }
 .search-form > * {
     margin-right: 5px;
