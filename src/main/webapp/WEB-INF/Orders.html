@@ -12,46 +12,48 @@
 <header th:replace="WEB-INF/navbar :: navbar"></header>
 
 
-<h2>Your order page</h2>
+<h2 class="orangeCustom">Your order page</h2>
 
 
-<div>
+<div class = "darkBlue">
 
     <div>
-        <ul class="list-group list-group-flush">
+        <ul class="list-group list-group-flush lightGrey-text ">
             <li  th:each="order : ${orders}">
-                Order code: <span th:text="${order.code}"></span>
-                <br>
-                Supplier Code: <span th:text="${order.supplierCode}"></span>
-                <br>
-                Total : <span th:text="${order.totalAmount}"></span>
-                <br>
-                Shipping date: <span th:text="${order.shippingDate}"></span>
-                <br>
-                Shipping address: <span th:text="${order.shippingAddress}"></span>
-                <br>
-
-
-                <table class="table table-bordered" style="width: 100%">
-                    <thead class="lightBlue">
+                <table>
                     <tr>
-                        <th scope="col">Product</th>
-                        <th scope="col">Quantity</th>
+                        <td width = "25%">
+                            Order code: <span th:text="${order.code}"></span>
+                            <br>
+                            Supplier Code: <span th:text="${order.supplierCode}"></span>
+                            <br>
+                            Total : <span th:text="${order.totalAmount}"></span>
+                            <br>
+                            Shipping date: <span th:text="${order.shippingDate}"></span>
+                            <br>
+                            Shipping address: <span th:text="${order.shippingAddress}"></span>
+                        </td>
+                        <td width="5%">
+                        </td>
+                        <td>
+
+                            <table class="table table-bordered lightGrey-text" style="width: 100%">
+                                <thead class="lightBlue">
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Quantity</th>
+                                </tr>
+                                </thead>
+                                <tbody class="tabletable-bordered ">
+                                <tr th:each="prodMap : ${orderProducts.get(order)}">
+                                    <td class="align-content-center" th:text="${prodMap.getKey().getName()}"></td>
+                                    <td class="align-content-center" th:text="${prodMap.getValue()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody class="tabletable-bordered ">
-                    <tr th:each="prodMap : ${orderProducts.get(order)}">
-                        <td class="align-content-center" th:text="${prodMap.getKey().getName()}"></td>
-                        <td class="align-content-center" th:text="${prodMap.getValue()}"></td>
-                    </tr>
-                    </tbody>
                 </table>
-                </tr>
-
-
-
-
-
 
             </li>
         </ul>
