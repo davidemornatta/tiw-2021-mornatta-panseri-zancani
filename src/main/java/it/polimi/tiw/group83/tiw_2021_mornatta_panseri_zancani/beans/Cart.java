@@ -1,9 +1,9 @@
 package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans;
 
+import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.PriceRangeDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.ProductDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.SupplierDAO;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,9 +11,11 @@ import java.util.*;
 
 public class Cart {
     private final Map<Integer, Map<Integer, Integer>> supplierProductsMap;
+    private final Map<String, Float> supplierShippingTotals;
 
     public Cart() {
         supplierProductsMap = new HashMap<>();
+        supplierShippingTotals = new HashMap<>();
     }
 
     public int findProductQuantityFor(int supplierCode) {
@@ -26,7 +28,7 @@ public class Cart {
         return totQuantity;
     }
 
-    public int findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
+    public float findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         int total = 0;
         if(supplierProductsMap.containsKey(supplierCode)) {
@@ -54,12 +56,12 @@ public class Cart {
         return result;
     }
 
-    public Map<String, Integer> findAllProductTotals(Connection connection) throws SQLException {
-        Map<String, Integer> result = new HashMap<>();
+    public Map<String, Float> findAllProductTotals(Connection connection) throws SQLException {
+        Map<String, Float> result = new HashMap<>();
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         for(int supplierCode : supplierProductsMap.keySet()) {
             Supplier supplier = supplierDAO.findSupplierByCode(supplierCode);
-            int total = findProductTotalFor(supplierCode, connection);
+            float total = findProductTotalFor(supplierCode, connection);
             result.put(supplier.getName(), total);
         }
         return result;
@@ -83,7 +85,7 @@ public class Cart {
         supplierProductsMap.remove(supplier);
     }
 
-    public void addProduct(int supplierCode, int productCode, int quantity) {
+    public void addProduct(int supplierCode, int productCode, int quantity, Connection con) throws SQLException {
         if(supplierProductsMap.containsKey(supplierCode))
             if(supplierProductsMap.get(supplierCode).containsKey(productCode)) {
                 int prevQuantity = supplierProductsMap.get(supplierCode).get(productCode);
@@ -92,6 +94,31 @@ public class Cart {
                 supplierProductsMap.get(supplierCode).put(productCode, quantity);
         else
             supplierProductsMap.put(supplierCode, new HashMap<>(Map.of(productCode, quantity)));
+
+        calculateAndAddShippingTotal(supplierCode, con);
+    }
+
+    private void calculateAndAddShippingTotal(int supplierCode, Connection con) throws SQLException{
+        float shippingCosts = 0;
+        float supplierTotalAmount = findProductTotalFor(supplierCode, con);
+        SupplierDAO supplierDAO = new SupplierDAO(con);
+        Supplier supplier = supplierDAO.findSupplierByCode(supplierCode);
+        int minForFreeShipping = supplier.getFreeShippingCost();
+
+        if (supplierTotalAmount <= minForFreeShipping){
+            PriceRangeDAO prDAO = new PriceRangeDAO(con);
+            List<PriceRange> priceRanges = prDAO.findPriceRangesForSupplier(supplierCode);
+            int productQuantity = findProductQuantityFor(supplierCode);
+            for (PriceRange pr : priceRanges) {
+                if (productQuantity >= pr.getMinArticles() && productQuantity <= pr.getMaxArticles()) {
+                    shippingCosts = pr.getShippingCost();
+                    break;
+                }
+            }
+        }
+
+        supplierShippingTotals.put(supplier.getName(), shippingCosts);
+
     }
 
     public void checkValidity(Connection con) throws SQLException {
@@ -107,5 +134,9 @@ public class Cart {
                     iterator.remove();
             }
         }
+    }
+
+    public Map<String, Float> getAllShippingCosts() {
+        return new HashMap<String, Float>(supplierShippingTotals);
     }
 }

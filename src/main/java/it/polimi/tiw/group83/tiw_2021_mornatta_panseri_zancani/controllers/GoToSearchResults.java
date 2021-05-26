@@ -81,7 +81,7 @@ public class GoToSearchResults extends HttpServlet {
             Map<Supplier, Float> supplierPrice = new HashMap<>();
             Map<Supplier, List<PriceRange>> ranges = new HashMap<>();
             Map<Supplier, Integer> totalQuantity = new HashMap<>();
-            Map<Supplier, Integer> totalAmount = new HashMap<>();
+            Map<Supplier, Float> totalAmount = new HashMap<>();
             Cart cart = (Cart) session.getAttribute("cart");
 
             SupplierDAO supplierDAO = new SupplierDAO(connection);
@@ -96,7 +96,7 @@ public class GoToSearchResults extends HttpServlet {
                     int quantity = cart.findProductQuantityFor(s.getCode());
                     totalQuantity.put(s, quantity);
 
-                    int total = cart.findProductTotalFor(s.getCode(), connection);
+                    float total = cart.findProductTotalFor(s.getCode(), connection);
                     totalAmount.put(s, total);
 
                     List<PriceRange> priceRanges = priceRangeDAO.findPriceRangesForSupplier(s.getCode());

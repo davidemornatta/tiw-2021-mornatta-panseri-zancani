@@ -12,6 +12,7 @@
     <div th:each="supplier : ${supplierProducts.keySet()}">
         <h3 th:text="${supplier}"></h3>
         <h4 th:text="${supplierQuantities.get(supplier)} + ' products. Total: EUR ' + ${supplierTotals.get(supplier)}"></h4>
+        <h4 th:text="'Shipping total: EUR ' + ${supplierShippings.get(supplier)}"></h4>
         <ul class="list-group list-group-flush">
             <li th:each="product : ${supplierProducts.get(supplier).keySet()}">
                 <span th:text="${product.name}"></span>
