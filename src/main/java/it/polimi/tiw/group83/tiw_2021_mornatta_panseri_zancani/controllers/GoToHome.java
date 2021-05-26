@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.User;
+import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.ProductDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.UserDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.TemplateUtils;
@@ -48,7 +49,11 @@ public class GoToHome extends HttpServlet {
 
         try {
             lastViewed = userDAO.findLastFiveViewedBy(user.getId());
-        } catch (SQLException e) {
+            if(lastViewed.size() < 5) {
+                ProductDAO productDAO = new ProductDAO(connection);
+                lastViewed.addAll(productDAO.findRandomProducts(5 - lastViewed.size()));
+            }
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover last five viewed products");
             return;

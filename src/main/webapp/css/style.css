@@ -14,7 +14,9 @@
 .orangeCustom {
     background-color: #fca311;
 }
-
+.orange-text {
+    color: #fca311;
+}
 .lightGrey {
     background-color: #e5e5e5;
 }
@@ -43,4 +45,23 @@
 
 .top-margin {
     margin-top: 15px;
+}
+.search-results {
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 20%;
+    float: left;
+}
+.product-display {
+    width: 75%;
+    float: right;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+.product-display table {
+    width: 97%;
+    margin: auto auto 10px;
+}
+.product-display input[type="number"] {
+    width: 50px;
 }
