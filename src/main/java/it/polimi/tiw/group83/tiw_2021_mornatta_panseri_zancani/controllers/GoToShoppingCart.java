@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -61,18 +60,23 @@ public class GoToShoppingCart extends HttpServlet {
             supplierQuantities.put(supplier, quantity.orElse(-1));
         }
 
-        Map<String, Integer> supplierTotals;
+        Map<String, Float> supplierTotals;
         try {
             supplierTotals = cart.findAllProductTotals(connection);
         } catch (SQLException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error during db query");
             return;
         }
+
+        Map<String, Float> supplierShippings;
+        supplierShippings = cart.getAllShippingCosts();
+
         WebContext ctx = new WebContext(req, resp, getServletContext());
         ctx.setVariable("supplierCodes", supplierCodes);
         ctx.setVariable("supplierProducts", supplierProducts);
         ctx.setVariable("supplierQuantities", supplierQuantities);
         ctx.setVariable("supplierTotals", supplierTotals);
+        ctx.setVariable("supplierShippings", supplierShippings);
         String path = "WEB-INF/cart.html";
         templateEngine.process(path, ctx, resp.getWriter());
     }
