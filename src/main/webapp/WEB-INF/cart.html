@@ -9,20 +9,47 @@
 </head>
 <body class="darkBlue">
     <header th:replace="WEB-INF/navbar :: navbar"></header>
-    <div th:each="supplier : ${supplierProducts.keySet()}">
-        <h3 th:text="${supplier}"></h3>
-        <h4 th:text="${supplierQuantities.get(supplier)} + ' products. Total: EUR ' + ${supplierTotals.get(supplier)}"></h4>
-        <h4 th:text="'Shipping total: EUR ' + ${supplierShippings.get(supplier)}"></h4>
-        <ul class="list-group list-group-flush">
-            <li th:each="product : ${supplierProducts.get(supplier).keySet()}">
-                <span th:text="${product.name}"></span>
-                <span th:text="${supplierProducts.get(supplier).get(product)}"></span>
-            </li>
-        </ul>
-        <form action="ProcessOrder" method="post">
-            <input type="hidden" name="supplier" th:value="${supplierCodes.get(supplier)}">
-            <button class="btn btn-primary">Order</button>
-        </form>
+    <div class="container shopping-cart">
+        <div class="text-center">
+            <h3 class="orange-text">Shopping Cart</h3>
+        </div>
+        <div class="card navbar-blue" th:each="supplier : ${supplierProducts.keySet()}">
+            <h3 class="orange-text p-2" th:text="${supplier + ' - ' + supplierQuantities.get(supplier) + ' products'}"></h3>
+            <div class="lightGrey p-3">
+                <table class="table align-middle text-center">
+                    <thead>
+                    <tr>
+                        <th>Total</th>
+                        <th>Shipping</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><span th:text="${'&#36;' + supplierTotals.get(supplier)}"></span></td>
+                        <td><span th:text="${'&#36;' + supplierShippings.get(supplier)}"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table align-middle text-center">
+                    <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${supplierProducts.get(supplier).keySet()}">
+                        <td th:text="${product.name}"></td>
+                        <td th:text="${supplierProducts.get(supplier).get(product)}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <form action="ProcessOrder" method="post">
+                    <input type="hidden" name="supplier" th:value="${supplierCodes.get(supplier)}">
+                    <button class="btn btn-primary">Order</button>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
 </html>

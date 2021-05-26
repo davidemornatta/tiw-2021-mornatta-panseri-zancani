@@ -65,3 +65,19 @@
 .product-display input[type="number"] {
     width: 50px;
 }
+.shopping-cart {
+    margin-top: 20px;
+}
+.shopping-cart > div {
+    width: 35%;
+    margin: auto;
+}
+.shopping-cart > div:not(:last-child) {
+    margin-bottom: 30px;
+}
+.shopping-cart table {
+    table-layout: fixed;
+}
+.shopping-cart form {
+    text-align: center;
+}
