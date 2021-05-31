@@ -11,10 +11,12 @@
 <body class="darkBlue">
 <header th:replace="WEB-INF/navbar :: navbar"></header>
 
+<br>
+<div class="text-center">
+    <h3 class="lightGrey-text">Your orders:</h3>
+</div>
 
-<h2 class="orangeCustom">Your order page</h2>
-
-
+<br>
 <div class = "darkBlue">
 
     <div>
@@ -22,6 +24,10 @@
             <li  th:each="order : ${orders}">
                 <table>
                     <tr>
+
+                        <td width = "5%"></td>
+
+
                         <td width = "25%">
                             Order code: <span th:text="${order.code}"></span>
                             <br>
@@ -44,17 +50,19 @@
                                     <th scope="col">Quantity</th>
                                 </tr>
                                 </thead>
-                                <tbody class="tabletable-bordered ">
+                                <tbody class="table-light">
                                 <tr th:each="prodMap : ${orderProducts.get(order)}">
                                     <td class="align-content-center" th:text="${prodMap.getKey().getName()}"></td>
                                     <td class="align-content-center" th:text="${prodMap.getValue()}"></td>
                                 </tr>
+
                                 </tbody>
                             </table>
                         </td>
                     </tr>
                 </table>
 
+                <br>
             </li>
         </ul>
     </div>

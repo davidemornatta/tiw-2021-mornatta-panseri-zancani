@@ -3,6 +3,7 @@ package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.controllers;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Cart;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.User;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.OrderDAO;
+import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.SupplierDAO;
 import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
 
 import javax.servlet.ServletException;
@@ -36,6 +37,8 @@ public class ProcessOrder extends HttpServlet {
         Cart cart = (Cart) session.getAttribute("cart");
         User user = (User) session.getAttribute("user");
         String supplierCodeRaw = req.getParameter("supplier");
+        SupplierDAO supplierDAO = new SupplierDAO(connection);
+        String supplierName;
         int supplierCode = 0;
         try {
             if(supplierCodeRaw == null)
@@ -47,7 +50,8 @@ public class ProcessOrder extends HttpServlet {
         }
         OrderDAO orderDAO = new OrderDAO(connection);
         try {
-            orderDAO.createOrder(cart.findProductTotalFor(supplierCode, connection),
+            supplierName = supplierDAO.findSupplierByCode(supplierCode).getName();
+            orderDAO.createOrder(cart.findProductTotalFor(supplierCode, connection) + cart.getAllShippingCosts().get(supplierName),
                     new java.sql.Date(Calendar.getInstance().getTime().getTime()),
                     user.getShippingAddress(),
                     supplierCode, user.getId(),
