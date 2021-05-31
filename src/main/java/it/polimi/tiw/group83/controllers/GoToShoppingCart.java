@@ -1,9 +1,9 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.controllers;
+package it.polimi.tiw.group83.controllers;
 
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Cart;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.TemplateUtils;
+import it.polimi.tiw.group83.beans.Cart;
+import it.polimi.tiw.group83.beans.Product;
+import it.polimi.tiw.group83.utils.ConnectionHandler;
+import it.polimi.tiw.group83.utils.TemplateUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 

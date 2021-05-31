@@ -1,4 +1,4 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils;
+package it.polimi.tiw.group83.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

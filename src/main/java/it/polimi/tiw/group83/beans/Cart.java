@@ -1,8 +1,8 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans;
+package it.polimi.tiw.group83.beans;
 
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.PriceRangeDAO;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.ProductDAO;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.SupplierDAO;
+import it.polimi.tiw.group83.dao.PriceRangeDAO;
+import it.polimi.tiw.group83.dao.ProductDAO;
+import it.polimi.tiw.group83.dao.SupplierDAO;
 
 import java.io.IOException;
 import java.sql.Connection;

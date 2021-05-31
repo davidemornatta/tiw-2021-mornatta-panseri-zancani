@@ -1,4 +1,4 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans;
+package it.polimi.tiw.group83.beans;
 
 public class PriceRange {
     private int minArticles;

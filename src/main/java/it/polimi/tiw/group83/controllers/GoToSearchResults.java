@@ -1,13 +1,16 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.controllers;
+package it.polimi.tiw.group83.controllers;
 
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.*;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.*;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.TemplateUtils;
+import it.polimi.tiw.group83.beans.*;
+import it.polimi.tiw.group83.dao.PriceRangeDAO;
+import it.polimi.tiw.group83.dao.ProductDAO;
+import it.polimi.tiw.group83.dao.SupplierDAO;
+import it.polimi.tiw.group83.dao.UserDAO;
+import it.polimi.tiw.group83.beans.*;
+import it.polimi.tiw.group83.dao.*;
+import it.polimi.tiw.group83.utils.ConnectionHandler;
+import it.polimi.tiw.group83.utils.TemplateUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -17,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;

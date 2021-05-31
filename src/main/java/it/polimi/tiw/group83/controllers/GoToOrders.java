@@ -1,11 +1,11 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.controllers;
+package it.polimi.tiw.group83.controllers;
 
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Order;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.User;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.OrderDAO;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.TemplateUtils;
+import it.polimi.tiw.group83.beans.Order;
+import it.polimi.tiw.group83.beans.Product;
+import it.polimi.tiw.group83.beans.User;
+import it.polimi.tiw.group83.dao.OrderDAO;
+import it.polimi.tiw.group83.utils.ConnectionHandler;
+import it.polimi.tiw.group83.utils.TemplateUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import javax.servlet.ServletContext;

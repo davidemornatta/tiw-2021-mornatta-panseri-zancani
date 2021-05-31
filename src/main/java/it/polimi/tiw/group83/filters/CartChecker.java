@@ -1,7 +1,7 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.filters;
+package it.polimi.tiw.group83.filters;
 
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Cart;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
+import it.polimi.tiw.group83.beans.Cart;
+import it.polimi.tiw.group83.utils.ConnectionHandler;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

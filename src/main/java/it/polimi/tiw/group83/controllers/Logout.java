@@ -1,4 +1,4 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.controllers;
+package it.polimi.tiw.group83.controllers;
 
 import java.io.IOException;
 import javax.servlet.ServletException;

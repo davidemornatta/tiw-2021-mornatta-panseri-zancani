@@ -1,6 +1,6 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao;
+package it.polimi.tiw.group83.dao;
 
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Product;
+import it.polimi.tiw.group83.beans.Product;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;

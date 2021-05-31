@@ -1,6 +1,6 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao;
+package it.polimi.tiw.group83.dao;
 
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Supplier;
+import it.polimi.tiw.group83.beans.Supplier;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

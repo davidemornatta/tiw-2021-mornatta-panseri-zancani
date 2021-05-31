@@ -1,10 +1,10 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.controllers;
+package it.polimi.tiw.group83.controllers;
 
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.Cart;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.beans.User;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.OrderDAO;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.dao.SupplierDAO;
-import it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.utils.ConnectionHandler;
+import it.polimi.tiw.group83.beans.Cart;
+import it.polimi.tiw.group83.beans.User;
+import it.polimi.tiw.group83.dao.OrderDAO;
+import it.polimi.tiw.group83.dao.SupplierDAO;
+import it.polimi.tiw.group83.utils.ConnectionHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

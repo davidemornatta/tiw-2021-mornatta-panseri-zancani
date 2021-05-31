@@ -1,4 +1,4 @@
-package it.polimi.tiw.group83.tiw_2021_mornatta_panseri_zancani.filters;
+package it.polimi.tiw.group83.filters;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
