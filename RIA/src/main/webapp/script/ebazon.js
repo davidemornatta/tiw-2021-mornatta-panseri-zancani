@@ -40,6 +40,45 @@
 
         this.show = function() {
             this.usernameContainer.textContent = this.username;
+            let self = this;
+            makeCall("GET", "GetRecentlyViewedList", null, function (req) {
+                if (req.readyState === XMLHttpRequest.DONE) {
+                    if (req.status === 200) {
+                        let products = JSON.parse(req.responseText);
+                        self.update(products);
+                    }
+                } else {
+                    self.alert.textContent = req.responseText;
+                }
+            })
+        }
+
+        this.update = function (products) {
+            this.recentlyViewedContainer.innerHTML = "";
+            let self = this;
+            products.forEach(product => {
+                let row = document.createElement("tr");
+                let nameTd = document.createElement("td");
+                nameTd.textContent = product.name;
+                nameTd.className = "align-content-center";
+                row.appendChild(nameTd);
+                let categoryTd = document.createElement("td");
+                categoryTd.textContent = product.category;
+                categoryTd.className = "align-content-center";
+                row.appendChild(categoryTd);
+                let descriptionTd = document.createElement("td");
+                descriptionTd.textContent = product.description;
+                descriptionTd.className = "align-content-center";
+                row.appendChild(descriptionTd);
+                let imageTd = document.createElement("td");
+                let image = document.createElement("img");
+                image.src = "data:image/png;base64," + product.image;
+                image.className = "img-fluid product-thumbnail img-thumbnail";
+                imageTd.appendChild(image);
+                imageTd.className = "text-center";
+                row.appendChild(imageTd);
+                self.recentlyViewedContainer.appendChild(row)
+            })
         }
     }
 

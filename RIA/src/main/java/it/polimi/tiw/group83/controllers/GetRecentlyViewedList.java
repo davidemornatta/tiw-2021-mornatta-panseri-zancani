@@ -19,7 +19,6 @@ import java.util.List;
 
 @WebServlet("/GetRecentlyViewedList")
 public class GetRecentlyViewedList extends HttpServlet {
-    private static final long serialVersionUID = 1L;
     private Connection connection = null;
 
     public GetRecentlyViewedList() {
