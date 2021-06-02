@@ -1,6 +1,7 @@
 package it.polimi.tiw.group83.controllers;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.tiw.group83.beans.PriceRange;
 import it.polimi.tiw.group83.beans.Product;
@@ -96,16 +97,17 @@ public class GetProductDetailsData extends HttpServlet {
             return;
         }
 
-        String jsonProduct = new Gson().toJson(selectedProduct);
-        String jsonSuppliers = new Gson().toJson(suppliers);
-        String jsonSuppliersPrice = new Gson().toJson(supplierPrice);
-        String jsonSuppliersRanges = new Gson().toJson(ranges);
+        Gson gson = new Gson();
+        JsonElement jsonProduct = gson.toJsonTree(selectedProduct);
+        JsonElement jsonSuppliers = gson.toJsonTree(suppliers);
+        JsonElement jsonSuppliersPrice = gson.toJsonTree(supplierPrice);
+        JsonElement jsonSuppliersRanges = gson.toJsonTree(ranges);
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("product", jsonProduct);
-        jsonObject.addProperty("suppliers", jsonSuppliers);
-        jsonObject.addProperty("supplierPrice", jsonSuppliersPrice);
-        jsonObject.addProperty("ranges", jsonSuppliersRanges);
-        String json = new Gson().toJson(jsonObject);
+        jsonObject.add("product", jsonProduct);
+        jsonObject.add("suppliers", jsonSuppliers);
+        jsonObject.add("supplierPrice", jsonSuppliersPrice);
+        jsonObject.add("ranges", jsonSuppliersRanges);
+        String json = gson.toJson(jsonObject);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);
