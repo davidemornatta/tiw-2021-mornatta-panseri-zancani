@@ -1,13 +1,12 @@
 package it.polimi.tiw.group83.controllers;
 
+import com.google.gson.Gson;
 import it.polimi.tiw.group83.beans.Order;
 import it.polimi.tiw.group83.beans.Product;
 import it.polimi.tiw.group83.beans.User;
 import it.polimi.tiw.group83.dao.OrderDAO;
 import it.polimi.tiw.group83.utils.ConnectionHandler;
-import it.polimi.tiw.group83.utils.TemplateUtils;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,12 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 @WebServlet("/GoToOrders")
-public class GoToOrders extends HttpServlet {
+public class GetOrderList extends HttpServlet {
     private Connection connection = null;
-    private TemplateEngine templateEngine;
 
     public void init() throws ServletException {
-        templateEngine = TemplateUtils.initTemplateEngine(getServletContext());
         connection = ConnectionHandler.getConnection(getServletContext());
     }
 
@@ -52,22 +49,23 @@ public class GoToOrders extends HttpServlet {
                     orderProducts.put(o,products);
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to find products");
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    response.getWriter().println("Not possible to find products");
                     return;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to find orders");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Not possible to find orders");
             return;
         }
 
-        String path = "/WEB-INF/Orders.html";
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        ctx.setVariable("orders", orders);
-        ctx.setVariable("orderProducts", orderProducts);
-        templateEngine.process(path, ctx, response.getWriter());
+
+        String json = new Gson().toJson(orderProducts);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(json);
     }
 
     public void destroy() {
@@ -77,8 +75,5 @@ public class GoToOrders extends HttpServlet {
             e.printStackTrace();
         }
     }
-
-
-
 
 }
