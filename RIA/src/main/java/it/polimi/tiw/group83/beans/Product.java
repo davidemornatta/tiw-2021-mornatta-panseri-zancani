@@ -11,7 +11,7 @@ public class Product {
     private String name;
     private String category;
     private String description;
-    private BufferedImage image;
+    private String image;
 
     public int getCode() {
         return code;
@@ -45,14 +45,13 @@ public class Product {
         this.description = description;
     }
 
-    public String getImage() throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ImageIO.write(this.image, "png", output);
-        String imageAsBase64 = Base64.getEncoder().encodeToString(output.toByteArray());
-        return imageAsBase64;
+    public String getImage() {
+        return image;
     }
 
-    public void setImage(BufferedImage image) {
-        this.image = image;
+    public void setImage(BufferedImage image) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", output);
+        this.image = Base64.getEncoder().encodeToString(output.toByteArray());
     }
 }

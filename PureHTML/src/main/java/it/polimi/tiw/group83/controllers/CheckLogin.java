@@ -3,6 +3,7 @@ import it.polimi.tiw.group83.beans.Cart;
 import it.polimi.tiw.group83.beans.User;
 import it.polimi.tiw.group83.dao.UserDAO;
 import it.polimi.tiw.group83.utils.ConnectionHandler;
+import it.polimi.tiw.group83.utils.TemplateUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -31,19 +32,14 @@ public class CheckLogin extends HttpServlet {
     @Override
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
-        ServletContext servletContext = getServletContext();
-        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        this.templateEngine = new TemplateEngine();
-        this.templateEngine.setTemplateResolver(templateResolver);
-        templateResolver.setSuffix(".html");
+        templateEngine = TemplateUtils.initTemplateEngine(getServletContext());
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // obtain and escape params
-        String mail = null;
-        String pwd = null;
+        String mail;
+        String pwd;
         try {
             mail = StringEscapeUtils.escapeJava(request.getParameter("mail"));
             pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
@@ -59,7 +55,7 @@ public class CheckLogin extends HttpServlet {
 
         // query db to authenticate for user
         UserDAO userDao = new UserDAO(connection);
-        User user = null;
+        User user;
         try {
             user = userDao.checkCredentials(mail, pwd);
         } catch (SQLException e) {
@@ -69,7 +65,6 @@ public class CheckLogin extends HttpServlet {
 
         // If the user exists, add info to the session and go to home page, otherwise
         // show login page with error message
-
         String path;
         if (user == null) {
             ServletContext servletContext = getServletContext();
@@ -86,7 +81,6 @@ public class CheckLogin extends HttpServlet {
             path = getServletContext().getContextPath() + "/GoToHome";
             response.sendRedirect(path);
         }
-
     }
 
     @Override
