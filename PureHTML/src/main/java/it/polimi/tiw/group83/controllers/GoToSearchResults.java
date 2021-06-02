@@ -53,6 +53,7 @@ public class GoToSearchResults extends HttpServlet {
                 products = productDAO.searchForProductOrdered(searchQuery);
             } catch (SQLException e) {
                 e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "DB error, retry later");
                 return;
             }
         }
@@ -126,4 +127,12 @@ public class GoToSearchResults extends HttpServlet {
         templateEngine.process(path, ctx, response.getWriter());
     }
 
+    @Override
+    public void destroy() {
+        try {
+            ConnectionHandler.closeConnection(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
