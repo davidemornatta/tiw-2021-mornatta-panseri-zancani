@@ -6,6 +6,7 @@ import it.polimi.tiw.group83.utils.ConnectionHandler;
 import org.apache.commons.text.StringEscapeUtils;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @WebServlet("/CheckLogin")
+@MultipartConfig
 public class CheckLogin extends HttpServlet {
     private Connection connection = null;
 
@@ -30,15 +32,15 @@ public class CheckLogin extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // obtain and escape params
-        String mail = null;
-        String pwd = null;
+        String mail;
+        String pwd;
         try {
             mail = StringEscapeUtils.escapeJava(request.getParameter("mail"));
             pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
+
             if (mail == null || pwd == null || mail.isEmpty() || pwd.isEmpty()) {
                 throw new Exception("Missing or empty credential value");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -48,7 +50,7 @@ public class CheckLogin extends HttpServlet {
 
         // query db to authenticate for user
         UserDAO userDao = new UserDAO(connection);
-        User user = null;
+        User user;
         try {
             user = userDao.checkCredentials(mail, pwd);
         } catch (SQLException e) {
