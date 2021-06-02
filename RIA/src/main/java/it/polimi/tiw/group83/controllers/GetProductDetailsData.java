@@ -91,7 +91,8 @@ public class GetProductDetailsData extends HttpServlet {
             userDAO.addViewToProductFrom(user.getId(), productCode, new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis()));
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to load product details");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Not possible to recover mission");
             return;
         }
 
@@ -108,7 +109,6 @@ public class GetProductDetailsData extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);
-
     }
 
     public void destroy() {
