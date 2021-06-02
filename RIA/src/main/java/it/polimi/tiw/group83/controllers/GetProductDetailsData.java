@@ -29,7 +29,6 @@ import java.util.Map;
 
 @WebServlet("/GetProductDetailsData")
 public class GetProductDetailsData extends HttpServlet {
-    private static final long serialVersionUID = 1L;
     private Connection connection = null;
 
     public GetProductDetailsData() {
