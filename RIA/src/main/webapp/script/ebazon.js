@@ -1,7 +1,7 @@
 (function() { // avoid variables ending up in the global scope
 
     // page components
-    let navBar, home,
+    let navBar, alertContainer, alertText, home,
         pageOrchestrator = new PageOrchestrator(); // main controller
 
     window.addEventListener("load", () => {
@@ -18,16 +18,16 @@
 
     function NavBar() {
         this.registerEvents = function () {
-            document.getElementById("homeLink").addEventListener('click', ev => {
+            document.getElementById("homeLink").addEventListener('click', () => {
                 pageOrchestrator.navigateTo(home)
             })
-            document.getElementById("cartLink").addEventListener('click', ev => {
+            document.getElementById("cartLink").addEventListener('click', () => {
                 // pageOrchestrator.navigateTo(cart)
             })
-            document.getElementById("ordersLink").addEventListener('click', ev => {
+            document.getElementById("ordersLink").addEventListener('click', () => {
                 // pageOrchestrator.navigateTo(orders)
             })
-            document.getElementById("logoutLink").addEventListener('click', ev => {
+            document.getElementById("logoutLink").addEventListener('click', () => {
                 window.sessionStorage.removeItem('username');
             })
         }
@@ -46,9 +46,10 @@
                     if (req.status === 200) {
                         let products = JSON.parse(req.responseText);
                         self.update(products);
+                    } else {
+                        alertText.textContent = req.responseText;
+                        alertContainer.className = "";
                     }
-                } else {
-                    self.alert.textContent = req.responseText;
                 }
             })
         }
@@ -83,7 +84,10 @@
     }
 
     function PageOrchestrator() {
-        let alertContainer = document.getElementById("id_alert");
+        alertContainer = document.getElementById("alertBox");
+        alertText = document.getElementById("alertText");
+        let alertCloseButton = document.getElementById("closeButton");
+        alertCloseButton.addEventListener('click', () => alertContainer.className = "hidden");
         this.start = function() {
             navBar = new NavBar()
             navBar.registerEvents()
@@ -94,7 +98,8 @@
         };
 
         this.refresh = function() {
-            //alertContainer.textContent = "";
+            alertText.textContent = "";
+            alertContainer.className = "hidden";
         };
 
         this.navigateTo = function (page) {
