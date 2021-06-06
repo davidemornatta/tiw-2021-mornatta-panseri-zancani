@@ -34,7 +34,7 @@
             searchButton.addEventListener('click', () => {
                 let searchQuery = document.getElementById("searchInput").value;
                 if(searchQuery.length !== 0)
-                    pageOrchestrator.navigateTo(searchResults, searchQuery);
+                    pageOrchestrator.navigateTo(searchResults, searchQuery, null);
             })
         }
     }
@@ -68,14 +68,13 @@
             products.forEach(product => {
                 let row = document.createElement("tr");
                 let nameTd = document.createElement("td");
-                let form = document.createElement("form");
                 let button = document.createElement("button");
-                form.action = "#";
                 button.textContent = product.name;
                 button.className = "btn btn-warning";
-                button.type = "submit";
-                form.appendChild(button);
-                nameTd.appendChild(form);
+                button.addEventListener('click', () => {
+                    pageOrchestrator.navigateTo(searchResults, null, product.code);
+                });
+                nameTd.appendChild(button);
                 nameTd.className = "align-content-center";
                 row.appendChild(nameTd);
                 let categoryTd = document.createElement("td");
