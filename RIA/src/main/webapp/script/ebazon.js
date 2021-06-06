@@ -59,7 +59,14 @@
             products.forEach(product => {
                 let row = document.createElement("tr");
                 let nameTd = document.createElement("td");
-                nameTd.textContent = product.name;
+                let form = document.createElement("form");
+                let button = document.createElement("button");
+                form.action = "#";
+                button.textContent = product.name;
+                button.className = "btn btn-warning";
+                button.type = "submit";
+                form.appendChild(button);
+                nameTd.appendChild(form);
                 nameTd.className = "align-content-center";
                 row.appendChild(nameTd);
                 let categoryTd = document.createElement("td");
