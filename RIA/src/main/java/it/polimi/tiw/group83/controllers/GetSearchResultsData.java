@@ -1,6 +1,8 @@
 package it.polimi.tiw.group83.controllers;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import it.polimi.tiw.group83.beans.Product;
 import it.polimi.tiw.group83.dao.ProductDAO;
 import it.polimi.tiw.group83.utils.ConnectionHandler;
@@ -41,10 +43,18 @@ public class GetSearchResultsData extends HttpServlet {
             }
         }
 
-        String json = new Gson().toJson(products);
+        Gson gson = new Gson();
+        JsonArray array = new JsonArray();
+        for(Map.Entry<Product, Float> entry : products.entrySet()) {
+            JsonObject object = new JsonObject();
+            object.add("product", gson.toJsonTree(entry.getKey()));
+            object.addProperty("price", entry.getValue());
+            array.add(object);
+        }
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(json);
+        response.getWriter().write(array.toString());
     }
 
     @Override
