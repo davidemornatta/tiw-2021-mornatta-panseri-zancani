@@ -33,7 +33,7 @@
         </ul>
     </div>
     <form action="#" class="d-flex search-form col-3">
-        <input type="text" class="form-control " name="searchQuery" placeholder="Search for products..." aria-label="Search">
+        <input type="text" class="form-control " name="searchQuery" id="searchInput" placeholder="Search for products..." aria-label="Search">
         <button class="btn btn-warning" type="button" id="searchButton">Search</button>
     </form>
 </nav>
@@ -42,7 +42,7 @@
     <p id="alertText"></p>
 </div>
 <main>
-    <div>
+    <section id="homePage">
         <div class="text-center">
             <h1 class="logo" style="font-family: INHERIT,serif">Welcome to EBAZON</h1>
             <p class="fw-bold lightGrey-text">Logged in as <span id="username"></span></p>
@@ -60,24 +60,53 @@
                 </tr>
                 </thead>
                 <tbody class="table-light" id="recentlyViewed">
-                <!--
-                <tr th:each="p : ${lastViewed}">
-                    <td class="align-content-center">
-                        <form action="GoToSearchResults" method="get">
-                            <input type="hidden" name="selectedCode" th:value="${p.code}">
-                            <button class="btn btn-warning" type="submit" th:text="${p.getName()}"></button>
-                        </form>
-                    </td>
-                    <td class="align-content-center" th:text="${p.getCategory()}"></td>
-                    <td class="align-content-center" th:text="${p.getDescription()}"></td>
-                    <td class="text-center"><img class="img-fluid product-thumbnail img-thumbnail"
-                                                 th:src="'data:image/png;base64,' + ${p.getImage()}" alt="Unsupported image" src=""/></td>
-                </tr>
-                -->
                 </tbody>
             </table>
         </div>
-    </div>
+    </section>
+
+    <section id="searchPage" class="hidden">
+        <div class="card navbar-blue search-results" id="searchResults">
+            <h3 class="orange-text p-2">Search Results:</h3>
+            <ul class="list-group list-group-flush lightGrey text-center">
+            </ul>
+        </div>
+
+        <div class="card navbar-blue product-display" id="productDetails">
+            <h3 class="orange-text p-2">Product Details:</h3>
+
+            <table class="table align-middle text-light" id="productDetailsTable">
+                <thead class="lightBlue">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Image</th>
+                </tr>
+                </thead>
+                <tbody class="table-light">
+                <tr></tr>
+                </tbody>
+            </table>
+
+            <h4 class="orange-text p-2">All Suppliers:</h4>
+            <table class="table align-middle text-light" id="suppliersTable">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Rating</th>
+                    <th>Price</th>
+                    <th>Shipping Costs</th>
+                    <th>Free shipping</th>
+                    <th>Products in cart</th>
+                    <th>Tot in cart</th>
+                </tr>
+                </thead>
+                <tbody class="table-light">
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 </body>
 </html>

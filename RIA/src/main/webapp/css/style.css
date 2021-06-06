@@ -87,6 +87,7 @@
 }
 .product-display input[type="number"] {
     width: 50px;
+    margin-right: 5px;
 }
 .shopping-cart {
     margin-top: 20px;

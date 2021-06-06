@@ -1,7 +1,7 @@
 (function() { // avoid variables ending up in the global scope
 
     // page components
-    let navBar, alertContainer, alertText, home,
+    let navBar, alertContainer, alertText, home, searchResults,
         pageOrchestrator = new PageOrchestrator(); // main controller
 
     window.addEventListener("load", () => {
@@ -30,10 +30,17 @@
             document.getElementById("logoutLink").addEventListener('click', () => {
                 window.sessionStorage.removeItem('username');
             })
+            let searchButton = document.getElementById("searchButton");
+            searchButton.addEventListener('click', () => {
+                let searchQuery = document.getElementById("searchInput").value;
+                if(searchQuery.length !== 0)
+                    pageOrchestrator.navigateTo(searchResults, searchQuery);
+            })
         }
     }
 
-    function Home(_username, _usernameContainer, _recentlyViewedContainer) {
+    function Home(_pageContainer, _username, _usernameContainer, _recentlyViewedContainer) {
+        this.pageContainer = _pageContainer;
         this.username = _username;
         this.usernameContainer = _usernameContainer;
         this.recentlyViewedContainer = _recentlyViewedContainer;
@@ -41,6 +48,7 @@
         this.show = function() {
             this.usernameContainer.textContent = this.username;
             let self = this;
+            this.pageContainer.className = "";
             makeCall("GET", "GetRecentlyViewedList", null, function (req) {
                 if (req.readyState === XMLHttpRequest.DONE) {
                     if (req.status === 200) {
@@ -81,6 +89,205 @@
                 self.recentlyViewedContainer.appendChild(row)
             })
         }
+
+        this.reset = function () {
+            this.recentlyViewedContainer.innerHTML = "";
+            this.pageContainer.className = "hidden";
+        }
+    }
+
+    function SearchResults(_pageContainer, _searchResultsContainer, _productDetailsContainer, _productDetailsTable,
+                           _suppliersTable) {
+        this.pageContainer = _pageContainer;
+        this.searchResultsContainer = _searchResultsContainer;
+        this.productDetailsContainer = _productDetailsContainer;
+        this.productDetailsTable = _productDetailsTable;
+        this.suppliersTable = _suppliersTable;
+
+        this.lastSearchQuery = "";
+
+        this.show = function (searchQuery, selectedProduct) {
+            let self = this;
+            this.pageContainer.className = "";
+            this.searchResultsContainer.style.visibility = "hidden";
+            this.productDetailsContainer.style.visibility = "hidden";
+            if(searchQuery != null) {
+                this.searchResultsContainer.style.visibility = "visible";
+                this.lastSearchQuery = searchQuery;
+                makeCall("GET", "GetSearchResultsData?searchQuery=" + searchQuery, null,
+                    function (req) {
+                        if (req.readyState === XMLHttpRequest.DONE) {
+                            if (req.status === 200) {
+                                let products = JSON.parse(req.responseText);
+                                self.update(products, null);
+                            } else {
+                                alertText.textContent = req.responseText;
+                                alertContainer.className = "";
+                            }
+                        }
+                    })
+            }
+            if(selectedProduct != null) {
+                this.productDetailsContainer.style.visibility = "visible";
+                makeCall("GET", "GetProductDetailsData?productCode=" + selectedProduct, null,
+                    function (req) {
+                        if (req.readyState === XMLHttpRequest.DONE) {
+                            if (req.status === 200) {
+                                let details = JSON.parse(req.responseText);
+                                self.update(null, details);
+                            } else {
+                                alertText.textContent = req.responseText;
+                                alertContainer.className = "";
+                            }
+                        }
+                    })
+            }
+        }
+
+        this.update = function (results, productDetails) {
+            let self = this;
+            if(results != null) {
+                let list = this.searchResultsContainer.querySelector("ul");
+                list.innerHTML = "";
+                results.forEach(object => {
+                    let product = object.product;
+                    let price = object.price;
+
+                    let item = document.createElement("li");
+                    item.className = "list-group-item";
+                    let text = document.createElement("span");
+                    text.innerHTML = product.name + " - " + product.code + "<br>" + "Min price: &#36;" + price + "<br>";
+                    item.appendChild(text);
+                    let button = document.createElement("button");
+                    button.className = "btn btn-primary";
+                    button.innerText = "View Details";
+                    button.addEventListener('click', () => {
+                        pageOrchestrator.navigateTo(searchResults, self.lastSearchQuery, product.code);
+                    })
+                    item.appendChild(button);
+
+                    list.appendChild(item);
+                })
+            }
+            if(productDetails != null) {
+                let product = productDetails.product;
+                let row = this.productDetailsTable.querySelector("tbody tr");
+                row.innerHTML = "";
+
+                let name = document.createElement("td");
+                name.className = "align-content-center";
+                name.innerText = product.name;
+                row.appendChild(name);
+
+                let category = document.createElement("td");
+                category.className = "align-content-center";
+                category.innerText = product.category;
+                row.appendChild(category);
+
+                let description = document.createElement("td");
+                description.className = "align-content-center";
+                description.innerText = product.description;
+                row.appendChild(description);
+
+                let imageTd = document.createElement("td");
+                let image = document.createElement("img");
+                image.src = "data:image/png;base64," + product.image;
+                image.className = "img-fluid product-thumbnail img-thumbnail";
+                imageTd.appendChild(image);
+                imageTd.className = "text-center";
+                row.appendChild(imageTd);
+
+                let suppliers = productDetails.suppliers;
+                let tbody = this.suppliersTable.querySelector("tbody");
+                tbody.innerHTML = "";
+
+                suppliers.forEach(supplier => {
+                    let row = document.createElement("tr");
+
+                    let name = document.createElement("td");
+                    name.className = "align-content-center";
+                    name.innerText = supplier.name;
+                    row.appendChild(name);
+
+                    let rating = document.createElement("td");
+                    rating.className = "align-content-center";
+                    rating.innerText = supplier.rating;
+                    row.appendChild(rating);
+
+                    let price = document.createElement("td");
+                    price.className = "align-content-center";
+                    price.innerHTML = "&#36;" + supplier.price;
+                    row.appendChild(price);
+
+                    let rangesTd = document.createElement("td");
+                    rangesTd.className = "align-content-center";
+                    let rangesUl = document.createElement("ul");
+                    rangesUl.className = "list-group list-group-flush";
+                    supplier.priceRanges.forEach(r => {
+                        let range = document.createElement("li");
+                        range.innerText = r;
+                        rangesUl.appendChild(range);
+                    })
+                    rangesTd.appendChild(rangesUl);
+                    row.appendChild(rangesTd);
+
+                    let freeShipping = document.createElement("td");
+                    freeShipping.className = "align-content-center";
+                    freeShipping.innerHTML = "&#36;" + supplier.freeShippingCost;
+                    row.appendChild(freeShipping);
+
+                    let productInCart = document.createElement("td");
+                    productInCart.className = "align-content-center";
+                    productInCart.innerText = "TODO"; //TODO implement
+                    row.appendChild(productInCart);
+
+                    let totInCart = document.createElement("td");
+                    totInCart.className = "align-content-center";
+                    totInCart.innerHTML = "&#36;" + "TODO"; //TODO implement
+                    row.appendChild(totInCart);
+
+                    let formTd = document.createElement("td");
+                    formTd.className = "align-content-center";
+                    let addToCartForm = document.createElement("form");
+                    let prodInput = document.createElement("input");
+                    prodInput.type = "hidden";
+                    prodInput.name = "productCode";
+                    prodInput.value = product.code;
+                    addToCartForm.appendChild(prodInput);
+                    let supplierInput = document.createElement("input");
+                    supplierInput.type = "hidden";
+                    supplierInput.name = "supplierCode";
+                    supplierInput.value = supplier.code;
+                    addToCartForm.appendChild(supplierInput);
+                    let label = document.createElement("label");
+                    label.innerText = "Quantity: ";
+                    let input = document.createElement("input");
+                    input.type = "number";
+                    input.name = "quantity";
+                    input.min = "1";
+                    input.value = "1";
+                    label.appendChild(input);
+                    addToCartForm.appendChild(label);
+                    let button = document.createElement("button");
+                    button.className = "btn btn-primary";
+                    button.innerText = "Add to Cart";
+                    button.addEventListener('click', () => {
+                        //TODO implement
+                    })
+                    addToCartForm.appendChild(button);
+                    formTd.appendChild(addToCartForm);
+                    row.appendChild(formTd);
+
+                    tbody.appendChild(row);
+                })
+            }
+        }
+
+        this.reset = function () {
+            this.pageContainer.className = "hidden";
+            this.searchResultsContainer.style.visibility = "hidden";
+            this.productDetailsContainer.style.visibility = "hidden";
+        }
     }
 
     function PageOrchestrator() {
@@ -92,9 +299,13 @@
             navBar = new NavBar()
             navBar.registerEvents()
 
-            home = new Home(sessionStorage.getItem('username'),
+            home = new Home(document.getElementById("homePage"), sessionStorage.getItem('username'),
                 document.getElementById("username"), document.getElementById("recentlyViewed"));
             home.show();
+
+            searchResults = new SearchResults(document.getElementById("searchPage"),
+                document.getElementById("searchResults"), document.getElementById("productDetails"),
+                document.getElementById("productDetailsTable"), document.getElementById("suppliersTable"));
         };
 
         this.refresh = function() {
@@ -102,9 +313,10 @@
             alertContainer.className = "hidden";
         };
 
-        this.navigateTo = function (page) {
-            // TODO reset all other pages
-            page.show()
+        this.navigateTo = function (page, ...args) {
+            home.reset();
+            searchResults.reset();
+            page.show(...args);
         }
     }
 })();
