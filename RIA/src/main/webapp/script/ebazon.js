@@ -3,7 +3,7 @@
     // Cart
     let cart;
     // page components
-    let navBar, alertContainer, alertText, home, searchResults, cartPage,
+    let navBar, alertContainer, alertText, home, searchResults, supplierPopUp, supplierPopUpText, cartPage,
         pageOrchestrator = new PageOrchestrator(); // main controller
 
     window.addEventListener("load", () => {
@@ -255,12 +255,42 @@
 
                     let productInCart = document.createElement("td");
                     productInCart.className = "align-content-center";
-                    productInCart.innerText = "TODO"; //TODO implement
+                    let supplierMap = cart[supplier.code];
+                    let productSum = 0;
+                    if(supplierMap !== undefined) {
+                        for (const [, value] of Object.entries(supplierMap)) {
+                            productSum += value;
+                        }
+                    }
+                    productInCart.innerText = "" + productSum;
+                    productInCart.onmouseover = function (mouseEvent) {
+                        supplierPopUpText.textContent = "CIAO";
+                        supplierPopUp.style.left = mouseEvent.x + 'px';
+                        supplierPopUp.style.top = mouseEvent.y + 'px';
+                        supplierPopUp.className = "";
+                    }
+                    productInCart.onmouseout = function () {
+                        supplierPopUpText.textContent = "";
+                        supplierPopUp.className = "hidden";
+                    }
                     row.appendChild(productInCart);
 
                     let totInCart = document.createElement("td");
                     totInCart.className = "align-content-center";
-                    totInCart.innerHTML = "&#36;" + "TODO"; //TODO implement
+                    makeCall("GET", "GetCartPrices?cart=" + btoa(JSON.stringify(cart)), null, function (req) {
+                        if (req.readyState === XMLHttpRequest.DONE) {
+                            if (req.status === 200) {
+                                let prices = JSON.parse(req.responseText);
+                                totInCart.innerHTML = "&#36;" + prices[supplier.name].productsTotal;
+                            } else if (req.status === 401) {
+                                sessionStorage.removeItem("username");
+                                window.location.href = "index.html";
+                            } else {
+                                alertText.textContent = req.responseText;
+                                alertContainer.className = "";
+                            }
+                        }
+                    })
                     row.appendChild(totInCart);
 
                     let formTd = document.createElement("td");
@@ -347,6 +377,8 @@
     function PageOrchestrator() {
         alertContainer = document.getElementById("alertBox");
         alertText = document.getElementById("alertText");
+        supplierPopUp = document.getElementById("supplierPopUp");
+        supplierPopUpText = document.getElementById("supplierPopUpText");
         let alertCloseButton = document.getElementById("closeButton");
         alertCloseButton.addEventListener('click', () => alertContainer.className = "hidden");
         this.start = function() {
@@ -373,6 +405,8 @@
         this.refresh = function() {
             alertText.textContent = "";
             alertContainer.className = "hidden";
+            supplierPopUpText.textContent = "";
+            supplierPopUp.className = "hidden";
         };
 
         this.navigateTo = function (page, ...args) {
