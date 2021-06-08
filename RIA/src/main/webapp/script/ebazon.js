@@ -24,7 +24,7 @@
                 pageOrchestrator.navigateTo(home)
             })
             document.getElementById("cartLink").addEventListener('click', () => {
-                // pageOrchestrator.navigateTo(cart)
+                pageOrchestrator.navigateTo(cartPage)
             })
             document.getElementById("ordersLink").addEventListener('click', () => {
                 // pageOrchestrator.navigateTo(orders)
@@ -313,8 +313,9 @@
         }
     }
 
-    function CartPage(_pageContainer) {
+    function CartPage(_pageContainer, _listContainer) {
         this.pageContainer = _pageContainer;
+        this.listContainer = _listContainer;
 
         this.show = function () {
             this.pageContainer.className = "";
@@ -336,7 +337,84 @@
         }
 
         this.update = function (prices) {
-            console.log(prices)
+            this.listContainer.innerHTML = "";
+            for (const supplier in prices) {
+                if (!prices.hasOwnProperty(supplier))
+                    continue;
+
+                let div = document.createElement("div");
+                div.className = "card navbar-blue";
+
+                let title = document.createElement("h3");
+                title.className = "orange-text p-2";
+                title.innerText = supplier + " - " + prices[supplier].products.length + " products";
+                div.appendChild(title);
+
+                let innerDiv = document.createElement("div");
+                innerDiv.className = "lightGrey p-3";
+
+                let priceTable = document.createElement("table");
+                priceTable.className = "table align-middle text-center";
+
+                let priceTHead = document.createElement("thead");
+                let priceTHeadTr = document.createElement("tr");
+                priceTHead.appendChild(priceTHeadTr);
+                let priceTHeadTotal = document.createElement("th");
+                priceTHeadTotal.innerText = "Total";
+                priceTHeadTr.appendChild(priceTHeadTotal);
+                let priceTHeadShipping = document.createElement("th");
+                priceTHeadShipping.innerText = "Shipping";
+                priceTHeadTr.appendChild(priceTHeadShipping);
+                priceTHead.appendChild(priceTHeadTr);
+                priceTable.appendChild(priceTHead);
+
+                let priceTBody = document.createElement("tbody");
+                let priceTBodyTr = document.createElement("tr");
+                let priceTBodyTotal = document.createElement("td");
+                priceTBodyTotal.innerHTML = "&#36;" + prices[supplier].productsTotal;
+                priceTBodyTr.appendChild(priceTBodyTotal);
+                let priceTBodyShipping = document.createElement("td");
+                priceTBodyShipping.innerHTML = "&#36;" + prices[supplier].shippingTotal;
+                priceTBodyTr.appendChild(priceTBodyShipping);
+                priceTBody.appendChild(priceTBodyTr);
+                priceTable.appendChild(priceTBody);
+
+                innerDiv.appendChild(priceTable);
+
+                let productsTable = document.createElement("table");
+                productsTable.className = "table align-middle text-center";
+
+                let productsTHead = document.createElement("thead");
+                let productsTHeadTr = document.createElement("tr");
+                productsTHead.appendChild(productsTHeadTr);
+                let productsTHeadName = document.createElement("th");
+                productsTHeadName.innerText = "Product";
+                productsTHeadTr.appendChild(productsTHeadName);
+                let productsTHeadQuantity = document.createElement("th");
+                productsTHeadQuantity.innerText = "Quantity";
+                productsTHeadTr.appendChild(productsTHeadQuantity);
+                productsTHead.appendChild(productsTHeadTr);
+                productsTable.appendChild(productsTHead);
+
+                let productsTBody = document.createElement("tbody");
+                let productsTBodyTr = document.createElement("tr");
+                prices[supplier].products.forEach(product => {
+                    let productsTBodyName = document.createElement("td");
+                    productsTBodyName.innerText = product.name;
+                    productsTBodyTr.appendChild(productsTBodyName);
+                    let priceTBodyQuantity = document.createElement("td");
+                    priceTBodyQuantity.innerText = product.quantity;
+                    productsTBodyTr.appendChild(priceTBodyQuantity);
+                })
+                productsTBody.appendChild(productsTBodyTr);
+                productsTable.appendChild(productsTBody);
+
+                innerDiv.appendChild(productsTable);
+
+                div.appendChild(innerDiv);
+                this.listContainer.appendChild(div);
+            }
+
         }
 
         this.reset = function () {
@@ -361,7 +439,7 @@
                 document.getElementById("searchResults"), document.getElementById("productDetails"),
                 document.getElementById("productDetailsTable"), document.getElementById("suppliersTable"));
 
-            cartPage = new CartPage(document.getElementById("cartPage"));
+            cartPage = new CartPage(document.getElementById("cartPage"), document.getElementById("cartContainer"));
 
             if(localStorage.getItem("cart") !== null) {
                 cart = JSON.parse(localStorage.getItem("cart"));

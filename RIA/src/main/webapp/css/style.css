@@ -96,7 +96,7 @@
     width: 35%;
     margin: auto;
 }
-.shopping-cart > div:not(:last-child) {
+.shopping-cart #cartContainer > div:not(:last-child) {
     margin-bottom: 30px;
 }
 .shopping-cart table {
