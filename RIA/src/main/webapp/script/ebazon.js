@@ -20,6 +20,9 @@
 
     function NavBar() {
         this.registerEvents = function () {
+            document.getElementById("brand").addEventListener('click', () => {
+                pageOrchestrator.navigateTo(home)
+            })
             document.getElementById("homeLink").addEventListener('click', () => {
                 pageOrchestrator.navigateTo(home)
             })
@@ -30,7 +33,11 @@
                 // pageOrchestrator.navigateTo(orders)
             })
             document.getElementById("logoutLink").addEventListener('click', () => {
-                window.sessionStorage.removeItem('username');
+                makeCall("POST", "Logout", null, function () {
+                    window.sessionStorage.removeItem('username');
+                    window.location.href = "index.html";
+                })
+
             })
             let searchButton = document.getElementById("searchButton");
             searchButton.addEventListener('click', () => {

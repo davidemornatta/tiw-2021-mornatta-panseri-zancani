@@ -10,19 +10,16 @@ import java.io.IOException;
 @WebServlet("/Logout")
 public class Logout extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
-        String path = getServletContext().getContextPath() +  "/index.html";
-        response.sendRedirect(path);
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         doGet(request, response);
     }
 }

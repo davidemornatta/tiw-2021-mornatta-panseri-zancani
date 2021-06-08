@@ -33,6 +33,8 @@
     font-family: 'Bebas Neue', cursive;
     margin-left: 10px;
     color: #fca311;
+    font-size: 2.5rem;
+    margin-bottom: 0;
 }
 .search-form > * {
     margin-right: 5px;
