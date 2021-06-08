@@ -54,6 +54,16 @@ public class Cart {
         return result;
     }
 
+    public Map<String, Integer> getAllSupplierCodes(Connection connection) throws SQLException {
+        Map<String, Integer> supplierCodes = new HashMap<>();
+        SupplierDAO supplierDAO = new SupplierDAO(connection);
+        for(int supplierCode : supplierProductsMap.keySet()) {
+            String name = supplierDAO.findSupplierByCode(supplierCode).getName();
+            supplierCodes.put(name, supplierCode);
+        }
+        return supplierCodes;
+    }
+
     public Map<String, Float> findAllProductTotals(Connection connection) throws SQLException {
         Map<String, Float> result = new HashMap<>();
         SupplierDAO supplierDAO = new SupplierDAO(connection);

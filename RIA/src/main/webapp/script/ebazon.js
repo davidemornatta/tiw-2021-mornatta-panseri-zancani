@@ -396,12 +396,12 @@
             for (const supplier in prices) {
                 if (!prices.hasOwnProperty(supplier))
                     continue;
-                this.listContainer.appendChild(this.buildSupplierCart(supplier, prices));
+                this.listContainer.appendChild(this.buildSupplierCart(supplier, prices, true));
             }
 
         }
 
-        this.buildSupplierCart = function (supplier, prices) {
+        this.buildSupplierCart = function (supplier, prices, orderButton = false) {
             let div = document.createElement("div");
             div.className = "card navbar-blue";
 
@@ -470,6 +470,32 @@
             productsTable.appendChild(productsTBody);
 
             innerDiv.appendChild(productsTable);
+
+            if(orderButton) {
+                let orderForm = document.createElement("form");
+                orderForm.action = "#";
+                let supplierInput = document.createElement("input");
+                supplierInput.type = "hidden";
+                supplierInput.name = "supplier";
+                supplierInput.value = prices[supplier].code;
+                orderForm.appendChild(supplierInput);
+                let cartInput = document.createElement("input");
+                cartInput.type = "hidden";
+                cartInput.name = "cart";
+                cartInput.value = btoa(JSON.stringify(cart));
+                orderForm.appendChild(cartInput);
+                let orderBtn = document.createElement("button");
+                orderBtn.className = "btn btn-primary";
+                orderBtn.type = "button";
+                orderBtn.innerText = "Order";
+                orderBtn.addEventListener('click', () => {
+                    makeCall("POST", "CreateOrder", orderForm, function () {
+
+                    });
+                });
+                orderForm.appendChild(orderBtn);
+                innerDiv.appendChild(orderForm);
+            }
 
             div.appendChild(innerDiv);
             return div;

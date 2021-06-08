@@ -18,10 +18,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet("/CreateOrder")
 @MultipartConfig
@@ -36,6 +33,11 @@ public class CreateOrder extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
+
+        System.out.println(req.getParameter("supplier"));
+        System.out.println(new String(Base64.getDecoder().decode(req.getParameter("cart"))));
+
+        //TODO Implement
 
         Gson gson = new Gson();
 

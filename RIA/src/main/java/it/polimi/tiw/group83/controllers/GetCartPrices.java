@@ -59,10 +59,12 @@ public class GetCartPrices extends HttpServlet {
 
         JsonObject resp = new JsonObject();
         Map<String, Map<Product, Integer>> mapWithNames;
+        Map<String, Integer> supplierCodes;
         Map<String, Float> productsTotals;
         Map<String, Float> shippingCosts;
         try {
             mapWithNames = cart.findAllProducts(connection);
+            supplierCodes = cart.getAllSupplierCodes(connection);
             productsTotals = cart.findAllProductTotals(connection);
             shippingCosts = cart.getAllShippingCosts(connection);
         } catch (Exception e) {
@@ -74,8 +76,10 @@ public class GetCartPrices extends HttpServlet {
 
         for(String supplierName : mapWithNames.keySet()) {
             JsonObject supplierValue = new JsonObject();
-            JsonArray products = new JsonArray();
 
+            supplierValue.addProperty("code", supplierCodes.get(supplierName));
+
+            JsonArray products = new JsonArray();
             for(Map.Entry<Product, Integer> entry : mapWithNames.get(supplierName).entrySet()) {
                 JsonObject prod = new JsonObject();
                 prod.addProperty("name", entry.getKey().getName());
