@@ -25,11 +25,13 @@
     </filter>
     <filter-mapping>
         <filter-name>LoginFilter</filter-name>
-        <url-pattern>/GoToHome</url-pattern>
-        <url-pattern>/GoToSearchResults</url-pattern>
-        <url-pattern>/GoToShoppingCart</url-pattern>
-        <url-pattern>/ProcessOrder</url-pattern>
-        <url-pattern>/UpdateCart</url-pattern>
+        <url-pattern>/CreateOrder</url-pattern>
+        <url-pattern>/GetCartPrices</url-pattern>
+        <url-pattern>/GetOrderList</url-pattern>
+        <url-pattern>/GetProductDetailsData</url-pattern>
+        <url-pattern>/GetRecentlyViewedList</url-pattern>
+        <url-pattern>/GetSearchResultsData</url-pattern>
+        <url-pattern>/Logout</url-pattern>
     </filter-mapping>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>

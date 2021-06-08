@@ -107,6 +107,51 @@
             </table>
         </div>
     </section>
+
+    <section id="cartPage" class="hidden">
+        <div class="container shopping-cart">
+            <div class="text-center">
+                <h3 class="orange-text">Shopping Cart</h3>
+            </div>
+            <!--<div class="card navbar-blue" th:each="supplier : ${supplierProducts.keySet()}">
+                <h3 class="orange-text p-2" th:text="${supplier + ' - ' + supplierQuantities.get(supplier) + ' products'}"></h3>
+                <div class="lightGrey p-3">
+                    <table class="table align-middle text-center">
+                        <thead>
+                        <tr>
+                            <th>Total</th>
+                            <th>Shipping</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><span th:text="${'&#36;' + supplierTotals.get(supplier)}"></span></td>
+                            <td><span th:text="${'&#36;' + supplierShippings.get(supplier)}"></span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="table align-middle text-center">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product : ${supplierProducts.get(supplier).keySet()}">
+                            <td th:text="${product.name}"></td>
+                            <td th:text="${supplierProducts.get(supplier).get(product)}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <form action="#" method="post">
+                        <input type="hidden" name="supplier" th:value="${supplierCodes.get(supplier)}">
+                        <button class="btn btn-primary">Order</button>
+                    </form>
+                </div>
+            </div>-->
+        </div>
+    </section>
 </main>
 </body>
 </html>

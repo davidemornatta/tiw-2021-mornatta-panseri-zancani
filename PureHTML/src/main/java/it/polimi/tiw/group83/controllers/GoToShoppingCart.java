@@ -69,7 +69,13 @@ public class GoToShoppingCart extends HttpServlet {
         }
 
         Map<String, Float> supplierShippings;
-        supplierShippings = cart.getAllShippingCosts();
+        try {
+            supplierShippings = cart.getAllShippingCosts(connection);
+        } catch (SQLException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error during db query");
+            return;
+        }
+
 
         WebContext ctx = new WebContext(req, resp, getServletContext());
         ctx.setVariable("supplierCodes", supplierCodes);

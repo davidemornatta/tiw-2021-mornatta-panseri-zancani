@@ -28,8 +28,6 @@ import java.util.Map;
 public class CreateOrder extends HttpServlet {
     private Connection connection;
 
-    public CreateOrder() { }
-
     @Override
     public void init() throws ServletException {
         this.connection = ConnectionHandler.getConnection(this.getServletContext());
@@ -85,6 +83,5 @@ public class CreateOrder extends HttpServlet {
         } catch (SQLException var2) {
             var2.printStackTrace();
         }
-
     }
 }

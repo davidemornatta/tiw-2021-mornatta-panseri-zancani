@@ -12,14 +12,14 @@ import java.util.*;
 public class Cart {
     private final Map<Integer, Map<Integer, Integer>> supplierProductsMap;
 
-    public Cart() {
-        supplierProductsMap = new HashMap<>();
+    public Cart(Map<Integer, Map<Integer, Integer>> supplierProductsMap) {
+        this.supplierProductsMap = supplierProductsMap;
     }
 
     public int findProductQuantityFor(int supplierCode) {
         int totQuantity = 0;
-        if(supplierProductsMap.containsKey(supplierCode)) {
-            for(int quantity : supplierProductsMap.get(supplierCode).values()) {
+        if (supplierProductsMap.containsKey(supplierCode)) {
+            for (int quantity : supplierProductsMap.get(supplierCode).values()) {
                 totQuantity += quantity;
             }
         }
@@ -29,7 +29,7 @@ public class Cart {
     public float findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         int total = 0;
-        if(supplierProductsMap.containsKey(supplierCode)) {
+        if (supplierProductsMap.containsKey(supplierCode)) {
             total = supplierDAO.findProductsTotalWithQuantities(supplierCode, supplierProductsMap.get(supplierCode));
         }
         return total != -1 ? total : 0;
@@ -43,11 +43,11 @@ public class Cart {
     public Map<String, Map<Product, Integer>> findAllProducts(Connection connection) throws SQLException, IOException {
         Map<String, Map<Product, Integer>> result = new HashMap<>();
         SupplierDAO supplierDAO = new SupplierDAO(connection);
-        for(int supplierCode : supplierProductsMap.keySet()) {
+        for (int supplierCode : supplierProductsMap.keySet()) {
             Supplier supplier = supplierDAO.findSupplierByCode(supplierCode);
             List<Product> products = findAllProductsFor(supplierCode, connection);
             Map<Product, Integer> productQuantities = new HashMap<>();
-            for(Product product : products)
+            for (Product product : products)
                 productQuantities.put(product, supplierProductsMap.get(supplierCode).get(product.getCode()));
             result.put(supplier.getName(), productQuantities);
         }
@@ -57,7 +57,7 @@ public class Cart {
     public Map<String, Float> findAllProductTotals(Connection connection) throws SQLException {
         Map<String, Float> result = new HashMap<>();
         SupplierDAO supplierDAO = new SupplierDAO(connection);
-        for(int supplierCode : supplierProductsMap.keySet()) {
+        for (int supplierCode : supplierProductsMap.keySet()) {
             Supplier supplier = supplierDAO.findSupplierByCode(supplierCode);
             float total = findProductTotalFor(supplierCode, connection);
             result.put(supplier.getName(), total);
@@ -65,35 +65,6 @@ public class Cart {
         return result;
     }
 
-    public Map<String, Integer> getAllSupplierCodes(Connection connection) throws SQLException {
-        Map<String, Integer> supplierCodes = new HashMap<>();
-        SupplierDAO supplierDAO = new SupplierDAO(connection);
-        for(int supplierCode : supplierProductsMap.keySet()) {
-            String name = supplierDAO.findSupplierByCode(supplierCode).getName();
-            supplierCodes.put(name, supplierCode);
-        }
-        return supplierCodes;
-    }
-
-    public Map<Integer, Integer> findAllProductAndQuantitiesFor(int supplierCode) {
-        return new HashMap<>(supplierProductsMap.get(supplierCode));
-    }
-
-    public void removeOrderedItems(int supplier) {
-        supplierProductsMap.remove(supplier);
-    }
-
-    public void addProduct(int supplierCode, int productCode, int quantity) throws SQLException {
-        if(supplierProductsMap.containsKey(supplierCode))
-            if(supplierProductsMap.get(supplierCode).containsKey(productCode)) {
-                int prevQuantity = supplierProductsMap.get(supplierCode).get(productCode);
-                supplierProductsMap.get(supplierCode).put(productCode, quantity + prevQuantity);
-            } else
-                supplierProductsMap.get(supplierCode).put(productCode, quantity);
-        else
-            supplierProductsMap.put(supplierCode, new HashMap<>(Map.of(productCode, quantity)));
-
-    }
 
     private Map.Entry<String, Float> calculateShippingTotal(int supplierCode, Connection con) throws SQLException {
         float shippingCosts = 0;
@@ -102,7 +73,7 @@ public class Cart {
         Supplier supplier = supplierDAO.findSupplierByCode(supplierCode);
         int minForFreeShipping = supplier.getFreeShippingCost();
 
-        if (supplierTotalAmount <= minForFreeShipping){
+        if (supplierTotalAmount <= minForFreeShipping) {
             PriceRangeDAO prDAO = new PriceRangeDAO(con);
             List<PriceRange> priceRanges = prDAO.findPriceRangesForSupplier(supplierCode);
             int productQuantity = findProductQuantityFor(supplierCode);
@@ -135,10 +106,18 @@ public class Cart {
     public Map<String, Float> getAllShippingCosts(Connection con) throws SQLException {
         Map<String, Float> shippingCosts = new HashMap<>();
 
-        for(int supplierCode : supplierProductsMap.keySet()) {
-            shippingCosts.entrySet().add(calculateShippingTotal(supplierCode, con));
+        for (int supplierCode : supplierProductsMap.keySet()) {
+            Map.Entry<String, Float> entry = calculateShippingTotal(supplierCode, con);
+            shippingCosts.put(entry.getKey(), entry.getValue());
         }
 
         return shippingCosts;
+    }
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "supplierProductsMap=" + supplierProductsMap +
+                '}';
     }
 }

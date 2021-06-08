@@ -93,7 +93,7 @@ public class UpdateCart extends HttpServlet {
 
         Cart cart = (Cart) session.getAttribute("cart");
         try {
-            cart.addProduct(supplierCode, productCode, quantity, connection);
+            cart.addProduct(supplierCode, productCode, quantity);
         } catch (SQLException e) {
             e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to add item in cart");

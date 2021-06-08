@@ -12,10 +12,9 @@ public class LoginFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
 
-        String loginpath = req.getServletContext().getContextPath() + "/index.html";
         HttpSession session = req.getSession();
         if(session.getAttribute("user") == null) {
-            res.sendRedirect(loginpath);
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 

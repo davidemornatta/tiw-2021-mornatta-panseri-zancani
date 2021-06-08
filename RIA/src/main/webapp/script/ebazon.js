@@ -1,7 +1,9 @@
 (function() { // avoid variables ending up in the global scope
 
+    // Cart
+    let cart;
     // page components
-    let navBar, alertContainer, alertText, home, searchResults,
+    let navBar, alertContainer, alertText, home, searchResults, cartPage,
         pageOrchestrator = new PageOrchestrator(); // main controller
 
     window.addEventListener("load", () => {
@@ -54,6 +56,9 @@
                     if (req.status === 200) {
                         let products = JSON.parse(req.responseText);
                         self.update(products);
+                    } else if (req.status === 401) {
+                        sessionStorage.removeItem("username");
+                        window.location.href = "index.html";
                     } else {
                         alertText.textContent = req.responseText;
                         alertContainer.className = "";
@@ -126,6 +131,9 @@
                             if (req.status === 200) {
                                 let products = JSON.parse(req.responseText);
                                 self.update(products, null);
+                            } else if (req.status === 401) {
+                                sessionStorage.removeItem("username");
+                                window.location.href = "index.html";
                             } else {
                                 alertText.textContent = req.responseText;
                                 alertContainer.className = "";
@@ -141,6 +149,9 @@
                             if (req.status === 200) {
                                 let details = JSON.parse(req.responseText);
                                 self.update(null, details);
+                            } else if (req.status === 401) {
+                                sessionStorage.removeItem("username");
+                                window.location.href = "index.html";
                             } else {
                                 alertText.textContent = req.responseText;
                                 alertContainer.className = "";
@@ -255,16 +266,7 @@
                     let formTd = document.createElement("td");
                     formTd.className = "align-content-center";
                     let addToCartForm = document.createElement("form");
-                    let prodInput = document.createElement("input");
-                    prodInput.type = "hidden";
-                    prodInput.name = "productCode";
-                    prodInput.value = product.code;
-                    addToCartForm.appendChild(prodInput);
-                    let supplierInput = document.createElement("input");
-                    supplierInput.type = "hidden";
-                    supplierInput.name = "supplierCode";
-                    supplierInput.value = supplier.code;
-                    addToCartForm.appendChild(supplierInput);
+                    addToCartForm.action = "#";
                     let label = document.createElement("label");
                     label.innerText = "Quantity: ";
                     let input = document.createElement("input");
@@ -275,10 +277,25 @@
                     label.appendChild(input);
                     addToCartForm.appendChild(label);
                     let button = document.createElement("button");
+                    button.type = "button";
                     button.className = "btn btn-primary";
                     button.innerText = "Add to Cart";
                     button.addEventListener('click', () => {
-                        //TODO implement
+                        let supplierMap = cart[supplier.code];
+                        if(supplierMap === undefined) {
+                            supplierMap = {};
+                            cart[supplier.code] = supplierMap;
+                        }
+
+                        if(supplierMap[product.code] === undefined) {
+                            supplierMap[product.code] = parseInt(input.value);
+                        } else {
+                            supplierMap[product.code] = supplierMap[product.code] + parseInt(input.value);
+                        }
+
+                        localStorage.setItem("cart", JSON.stringify(cart));
+
+                        pageOrchestrator.navigateTo(cartPage);
                     })
                     addToCartForm.appendChild(button);
                     formTd.appendChild(addToCartForm);
@@ -293,6 +310,37 @@
             this.pageContainer.className = "hidden";
             this.searchResultsContainer.style.visibility = "hidden";
             this.productDetailsContainer.style.visibility = "hidden";
+        }
+    }
+
+    function CartPage(_pageContainer) {
+        this.pageContainer = _pageContainer;
+
+        this.show = function () {
+            this.pageContainer.className = "";
+            let self = this;
+            makeCall("GET", "GetCartPrices?cart=" + btoa(JSON.stringify(cart)), null, function (req) {
+                if (req.readyState === XMLHttpRequest.DONE) {
+                    if (req.status === 200) {
+                        let prices = JSON.parse(req.responseText);
+                        self.update(prices);
+                    } else if (req.status === 401) {
+                        sessionStorage.removeItem("username");
+                        window.location.href = "index.html";
+                    } else {
+                        alertText.textContent = req.responseText;
+                        alertContainer.className = "";
+                    }
+                }
+            })
+        }
+
+        this.update = function (prices) {
+            console.log(prices)
+        }
+
+        this.reset = function () {
+            this.pageContainer.className = "hidden";
         }
     }
 
@@ -312,6 +360,14 @@
             searchResults = new SearchResults(document.getElementById("searchPage"),
                 document.getElementById("searchResults"), document.getElementById("productDetails"),
                 document.getElementById("productDetailsTable"), document.getElementById("suppliersTable"));
+
+            cartPage = new CartPage(document.getElementById("cartPage"));
+
+            if(localStorage.getItem("cart") !== null) {
+                cart = JSON.parse(localStorage.getItem("cart"));
+            } else {
+                cart = {}
+            }
         };
 
         this.refresh = function() {
@@ -322,6 +378,7 @@
         this.navigateTo = function (page, ...args) {
             home.reset();
             searchResults.reset();
+            cartPage.reset();
             page.show(...args);
         }
     }

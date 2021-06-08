@@ -39,7 +39,7 @@ public class ProcessOrder extends HttpServlet {
         String supplierCodeRaw = req.getParameter("supplier");
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         String supplierName;
-        int supplierCode = 0;
+        int supplierCode;
         try {
             if(supplierCodeRaw == null)
                 throw new RuntimeException();
@@ -51,7 +51,7 @@ public class ProcessOrder extends HttpServlet {
         OrderDAO orderDAO = new OrderDAO(connection);
         try {
             supplierName = supplierDAO.findSupplierByCode(supplierCode).getName();
-            orderDAO.createOrder(cart.findProductTotalFor(supplierCode, connection) + cart.getAllShippingCosts().get(supplierName),
+            orderDAO.createOrder(cart.findProductTotalFor(supplierCode, connection) + cart.getAllShippingCosts(connection).get(supplierName),
                     new java.sql.Date(Calendar.getInstance().getTime().getTime()),
                     user.getShippingAddress(),
                     supplierCode, user.getId(),
