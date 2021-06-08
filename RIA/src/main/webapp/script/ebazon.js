@@ -225,122 +225,140 @@
                 let tbody = this.suppliersTable.querySelector("tbody");
                 tbody.innerHTML = "";
 
-                suppliers.forEach(supplier => {
-                    let row = document.createElement("tr");
-
-                    let name = document.createElement("td");
-                    name.className = "align-content-center";
-                    name.innerText = supplier.name;
-                    row.appendChild(name);
-
-                    let rating = document.createElement("td");
-                    rating.className = "align-content-center";
-                    rating.innerText = supplier.rating;
-                    row.appendChild(rating);
-
-                    let price = document.createElement("td");
-                    price.className = "align-content-center";
-                    price.innerHTML = "&#36;" + supplier.price;
-                    row.appendChild(price);
-
-                    let rangesTd = document.createElement("td");
-                    rangesTd.className = "align-content-center";
-                    let rangesUl = document.createElement("ul");
-                    rangesUl.className = "list-group list-group-flush";
-                    supplier.priceRanges.forEach(r => {
-                        let range = document.createElement("li");
-                        range.innerText = r;
-                        rangesUl.appendChild(range);
-                    })
-                    rangesTd.appendChild(rangesUl);
-                    row.appendChild(rangesTd);
-
-                    let freeShipping = document.createElement("td");
-                    freeShipping.className = "align-content-center";
-                    freeShipping.innerHTML = "&#36;" + supplier.freeShippingCost;
-                    row.appendChild(freeShipping);
-
-                    let productInCart = document.createElement("td");
-                    productInCart.className = "align-content-center";
-                    let supplierMap = cart[supplier.code];
-                    let productSum = 0;
-                    if(supplierMap !== undefined) {
-                        for (const [, value] of Object.entries(supplierMap)) {
-                            productSum += value;
-                        }
-                    }
-                    productInCart.innerText = "" + productSum;
-                    productInCart.onmouseover = function (mouseEvent) {
-                        supplierPopUpText.textContent = "CIAO";
-                        supplierPopUp.style.left = mouseEvent.x + 'px';
-                        supplierPopUp.style.top = mouseEvent.y + 'px';
-                        supplierPopUp.className = "";
-                    }
-                    productInCart.onmouseout = function () {
-                        supplierPopUpText.textContent = "";
-                        supplierPopUp.className = "hidden";
-                    }
-                    row.appendChild(productInCart);
-
-                    let totInCart = document.createElement("td");
-                    totInCart.className = "align-content-center";
-                    makeCall("GET", "GetCartPrices?cart=" + btoa(JSON.stringify(cart)), null, function (req) {
-                        if (req.readyState === XMLHttpRequest.DONE) {
-                            if (req.status === 200) {
-                                let prices = JSON.parse(req.responseText);
-                                totInCart.innerHTML = "&#36;" + prices[supplier.name].productsTotal;
-                            } else if (req.status === 401) {
-                                sessionStorage.removeItem("username");
-                                window.location.href = "index.html";
-                            } else {
-                                alertText.textContent = req.responseText;
-                                alertContainer.className = "";
-                            }
-                        }
-                    })
-                    row.appendChild(totInCart);
-
-                    let formTd = document.createElement("td");
-                    formTd.className = "align-content-center";
-                    let addToCartForm = document.createElement("form");
-                    addToCartForm.action = "#";
-                    let label = document.createElement("label");
-                    label.innerText = "Quantity: ";
-                    let input = document.createElement("input");
-                    input.type = "number";
-                    input.name = "quantity";
-                    input.min = "1";
-                    input.value = "1";
-                    label.appendChild(input);
-                    addToCartForm.appendChild(label);
-                    let button = document.createElement("button");
-                    button.type = "button";
-                    button.className = "btn btn-primary";
-                    button.innerText = "Add to Cart";
-                    button.addEventListener('click', () => {
-                        let supplierMap = cart[supplier.code];
-                        if(supplierMap === undefined) {
-                            supplierMap = {};
-                            cart[supplier.code] = supplierMap;
-                        }
-
-                        if(supplierMap[product.code] === undefined) {
-                            supplierMap[product.code] = parseInt(input.value);
+                let self = this;
+                makeCall("GET", "GetCartPrices?cart=" + btoa(JSON.stringify(cart)), null, function (req) {
+                    if (req.readyState === XMLHttpRequest.DONE) {
+                        if (req.status === 200) {
+                            self.prices = JSON.parse(req.responseText);
+                            self.createDetails(suppliers, self.prices, tbody);
+                        } else if (req.status === 401) {
+                            sessionStorage.removeItem("username");
+                            window.location.href = "index.html";
                         } else {
-                            supplierMap[product.code] = supplierMap[product.code] + parseInt(input.value);
+                            alertText.textContent = req.responseText;
+                            alertContainer.className = "";
                         }
-
-                        localStorage.setItem("cart", JSON.stringify(cart));
-
-                        pageOrchestrator.navigateTo(cartPage);
-                    })
-                    addToCartForm.appendChild(button);
-                    formTd.appendChild(addToCartForm);
-                    row.appendChild(formTd);
-
-                    tbody.appendChild(row);
+                    }
                 })
             }
+        }
+
+        this.createDetails = function (suppliers, prices, tbody) {
+            suppliers.forEach(supplier => {
+                let row = document.createElement("tr");
+
+                let name = document.createElement("td");
+                name.className = "align-content-center";
+                name.innerText = supplier.name;
+                row.appendChild(name);
+
+                let rating = document.createElement("td");
+                rating.className = "align-content-center";
+                rating.innerText = supplier.rating;
+                row.appendChild(rating);
+
+                let price = document.createElement("td");
+                price.className = "align-content-center";
+                price.innerHTML = "&#36;" + supplier.price;
+                row.appendChild(price);
+
+                let rangesTd = document.createElement("td");
+                rangesTd.className = "align-content-center";
+                let rangesUl = document.createElement("ul");
+                rangesUl.className = "list-group list-group-flush";
+                supplier.priceRanges.forEach(r => {
+                    let range = document.createElement("li");
+                    range.innerText = r;
+                    rangesUl.appendChild(range);
+                })
+                rangesTd.appendChild(rangesUl);
+                row.appendChild(rangesTd);
+
+                let freeShipping = document.createElement("td");
+                freeShipping.className = "align-content-center";
+                freeShipping.innerHTML = "&#36;" + supplier.freeShippingCost;
+                row.appendChild(freeShipping);
+
+                let productInCart = document.createElement("td");
+                productInCart.className = "align-content-center";
+                let supplierMap = cart[supplier.code];
+                let productSum = 0;
+                if(supplierMap !== undefined) {
+                    for (const [, value] of Object.entries(supplierMap)) {
+                        productSum += value;
+                    }
+                }
+                productInCart.innerText = "" + productSum;
+                productInCart.onmouseover = function (mouseEvent) {
+                    supplierPopUp.appendChild(cartPage.buildSupplierCart(supplier.name, prices))
+                    supplierPopUp.style.left = mouseEvent.x + 'px';
+                    supplierPopUp.style.top = (mouseEvent.y-300) + 'px';
+                    supplierPopUp.className = "";
+                }
+                productInCart.onmouseout = function () {
+                    supplierPopUp.innerHTML = "";
+                    supplierPopUp.className = "hidden";
+                }
+                row.appendChild(productInCart);
+
+                let totInCart = document.createElement("td");
+                totInCart.className = "align-content-center";
+                makeCall("GET", "GetCartPrices?cart=" + btoa(JSON.stringify(cart)), null, function (req) {
+                    if (req.readyState === XMLHttpRequest.DONE) {
+                        if (req.status === 200) {
+                            let prices = JSON.parse(req.responseText);
+                            totInCart.innerHTML = "&#36;" + prices[supplier.name].productsTotal;
+                        } else if (req.status === 401) {
+                            sessionStorage.removeItem("username");
+                            window.location.href = "index.html";
+                        } else {
+                            alertText.textContent = req.responseText;
+                            alertContainer.className = "";
+                        }
+                    }
+                })
+                row.appendChild(totInCart);
+
+                let formTd = document.createElement("td");
+                formTd.className = "align-content-center";
+                let addToCartForm = document.createElement("form");
+                addToCartForm.action = "#";
+                let label = document.createElement("label");
+                label.innerText = "Quantity: ";
+                let input = document.createElement("input");
+                input.type = "number";
+                input.name = "quantity";
+                input.min = "1";
+                input.value = "1";
+                label.appendChild(input);
+                addToCartForm.appendChild(label);
+                let button = document.createElement("button");
+                button.type = "button";
+                button.className = "btn btn-primary";
+                button.innerText = "Add to Cart";
+                button.addEventListener('click', () => {
+                    let supplierMap = cart[supplier.code];
+                    if(supplierMap === undefined) {
+                        supplierMap = {};
+                        cart[supplier.code] = supplierMap;
+                    }
+
+                    if(supplierMap[product.code] === undefined) {
+                        supplierMap[product.code] = parseInt(input.value);
+                    } else {
+                        supplierMap[product.code] = supplierMap[product.code] + parseInt(input.value);
+                    }
+
+                    localStorage.setItem("cart", JSON.stringify(cart));
+
+                    pageOrchestrator.navigateTo(cartPage);
+                })
+                addToCartForm.appendChild(button);
+                formTd.appendChild(addToCartForm);
+                row.appendChild(formTd);
+
+                tbody.appendChild(row);
+            })
         }
 
         this.reset = function () {
@@ -378,80 +396,83 @@
             for (const supplier in prices) {
                 if (!prices.hasOwnProperty(supplier))
                     continue;
-
-                let div = document.createElement("div");
-                div.className = "card navbar-blue";
-
-                let title = document.createElement("h3");
-                title.className = "orange-text p-2";
-                title.innerText = supplier + " - " + prices[supplier].products.length + " products";
-                div.appendChild(title);
-
-                let innerDiv = document.createElement("div");
-                innerDiv.className = "lightGrey p-3";
-
-                let priceTable = document.createElement("table");
-                priceTable.className = "table align-middle text-center";
-
-                let priceTHead = document.createElement("thead");
-                let priceTHeadTr = document.createElement("tr");
-                priceTHead.appendChild(priceTHeadTr);
-                let priceTHeadTotal = document.createElement("th");
-                priceTHeadTotal.innerText = "Total";
-                priceTHeadTr.appendChild(priceTHeadTotal);
-                let priceTHeadShipping = document.createElement("th");
-                priceTHeadShipping.innerText = "Shipping";
-                priceTHeadTr.appendChild(priceTHeadShipping);
-                priceTHead.appendChild(priceTHeadTr);
-                priceTable.appendChild(priceTHead);
-
-                let priceTBody = document.createElement("tbody");
-                let priceTBodyTr = document.createElement("tr");
-                let priceTBodyTotal = document.createElement("td");
-                priceTBodyTotal.innerHTML = "&#36;" + prices[supplier].productsTotal;
-                priceTBodyTr.appendChild(priceTBodyTotal);
-                let priceTBodyShipping = document.createElement("td");
-                priceTBodyShipping.innerHTML = "&#36;" + prices[supplier].shippingTotal;
-                priceTBodyTr.appendChild(priceTBodyShipping);
-                priceTBody.appendChild(priceTBodyTr);
-                priceTable.appendChild(priceTBody);
-
-                innerDiv.appendChild(priceTable);
-
-                let productsTable = document.createElement("table");
-                productsTable.className = "table align-middle text-center";
-
-                let productsTHead = document.createElement("thead");
-                let productsTHeadTr = document.createElement("tr");
-                productsTHead.appendChild(productsTHeadTr);
-                let productsTHeadName = document.createElement("th");
-                productsTHeadName.innerText = "Product";
-                productsTHeadTr.appendChild(productsTHeadName);
-                let productsTHeadQuantity = document.createElement("th");
-                productsTHeadQuantity.innerText = "Quantity";
-                productsTHeadTr.appendChild(productsTHeadQuantity);
-                productsTHead.appendChild(productsTHeadTr);
-                productsTable.appendChild(productsTHead);
-
-                let productsTBody = document.createElement("tbody");
-                let productsTBodyTr = document.createElement("tr");
-                prices[supplier].products.forEach(product => {
-                    let productsTBodyName = document.createElement("td");
-                    productsTBodyName.innerText = product.name;
-                    productsTBodyTr.appendChild(productsTBodyName);
-                    let priceTBodyQuantity = document.createElement("td");
-                    priceTBodyQuantity.innerText = product.quantity;
-                    productsTBodyTr.appendChild(priceTBodyQuantity);
-                })
-                productsTBody.appendChild(productsTBodyTr);
-                productsTable.appendChild(productsTBody);
-
-                innerDiv.appendChild(productsTable);
-
-                div.appendChild(innerDiv);
-                this.listContainer.appendChild(div);
+                this.listContainer.appendChild(this.buildSupplierCart(supplier, prices));
             }
 
+        }
+
+        this.buildSupplierCart = function (supplier, prices) {
+            let div = document.createElement("div");
+            div.className = "card navbar-blue";
+
+            let title = document.createElement("h3");
+            title.className = "orange-text p-2";
+            title.innerText = supplier + " - " + prices[supplier].products.length + " products";
+            div.appendChild(title);
+
+            let innerDiv = document.createElement("div");
+            innerDiv.className = "lightGrey p-3";
+
+            let priceTable = document.createElement("table");
+            priceTable.className = "table align-middle text-center";
+
+            let priceTHead = document.createElement("thead");
+            let priceTHeadTr = document.createElement("tr");
+            priceTHead.appendChild(priceTHeadTr);
+            let priceTHeadTotal = document.createElement("th");
+            priceTHeadTotal.innerText = "Total";
+            priceTHeadTr.appendChild(priceTHeadTotal);
+            let priceTHeadShipping = document.createElement("th");
+            priceTHeadShipping.innerText = "Shipping";
+            priceTHeadTr.appendChild(priceTHeadShipping);
+            priceTHead.appendChild(priceTHeadTr);
+            priceTable.appendChild(priceTHead);
+
+            let priceTBody = document.createElement("tbody");
+            let priceTBodyTr = document.createElement("tr");
+            let priceTBodyTotal = document.createElement("td");
+            priceTBodyTotal.innerHTML = "&#36;" + prices[supplier].productsTotal;
+            priceTBodyTr.appendChild(priceTBodyTotal);
+            let priceTBodyShipping = document.createElement("td");
+            priceTBodyShipping.innerHTML = "&#36;" + prices[supplier].shippingTotal;
+            priceTBodyTr.appendChild(priceTBodyShipping);
+            priceTBody.appendChild(priceTBodyTr);
+            priceTable.appendChild(priceTBody);
+
+            innerDiv.appendChild(priceTable);
+
+            let productsTable = document.createElement("table");
+            productsTable.className = "table align-middle text-center";
+
+            let productsTHead = document.createElement("thead");
+            let productsTHeadTr = document.createElement("tr");
+            productsTHead.appendChild(productsTHeadTr);
+            let productsTHeadName = document.createElement("th");
+            productsTHeadName.innerText = "Product";
+            productsTHeadTr.appendChild(productsTHeadName);
+            let productsTHeadQuantity = document.createElement("th");
+            productsTHeadQuantity.innerText = "Quantity";
+            productsTHeadTr.appendChild(productsTHeadQuantity);
+            productsTHead.appendChild(productsTHeadTr);
+            productsTable.appendChild(productsTHead);
+
+            let productsTBody = document.createElement("tbody");
+            let productsTBodyTr = document.createElement("tr");
+            prices[supplier].products.forEach(product => {
+                let productsTBodyName = document.createElement("td");
+                productsTBodyName.innerText = product.name;
+                productsTBodyTr.appendChild(productsTBodyName);
+                let priceTBodyQuantity = document.createElement("td");
+                priceTBodyQuantity.innerText = product.quantity;
+                productsTBodyTr.appendChild(priceTBodyQuantity);
+            })
+            productsTBody.appendChild(productsTBodyTr);
+            productsTable.appendChild(productsTBody);
+
+            innerDiv.appendChild(productsTable);
+
+            div.appendChild(innerDiv);
+            return div;
         }
 
         this.reset = function () {
@@ -490,7 +511,6 @@
         this.refresh = function() {
             alertText.textContent = "";
             alertContainer.className = "hidden";
-            supplierPopUpText.textContent = "";
             supplierPopUp.className = "hidden";
         };
 

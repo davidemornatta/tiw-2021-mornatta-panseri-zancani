@@ -69,11 +69,8 @@
     margin: 10px 10px;
     border: 2px solid #ffc107;
     color: #ffc107;
-    max-width: 25%;
-}
-#supplierPopUp #supplierPopUpText {
-    padding: 20px;
-    margin: 0;
+    width: 25%;
+
 }
 .user-image {
     width: 100%;
