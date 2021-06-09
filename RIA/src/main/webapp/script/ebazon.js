@@ -500,7 +500,7 @@
                             if (req.status === 200) {
                                 delete cart[prices[supplier].code];
                                 localStorage.setItem("cart", JSON.stringify(cart));
-                                // pageOrchestrator.navigateTo(orders);
+                                pageOrchestrator.navigateTo(orderPage);
                             } else if (req.status === 401) {
                                 sessionStorage.removeItem("username");
                                 window.location.href = "index.html";
