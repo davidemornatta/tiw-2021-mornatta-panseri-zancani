@@ -32,7 +32,7 @@
                             Order code: <span th:text="${order.code}"></span>
                             <br>
                             Supplier Code: <span th:text="${order.supplierCode}"></span>
-                            <br>
+           5                 <br>
                             Total : <span th:text="${order.totalAmount}"></span>
                             <br>
                             Shipping date: <span th:text="${order.shippingDate}"></span>
@@ -52,7 +52,7 @@
                                 </thead>
                                 <tbody class="table-light">
                                 <tr th:each="prodMap : ${orderProducts.get(order)}">
-                                    <td class="align-content-center" th:text="${prodMap.getKey().getName()}"></td>
+                                    <td width="65%" class="align-content-center" th:text="${prodMap.getKey().getName()}"></td>
                                     <td class="align-content-center" th:text="${prodMap.getValue()}"></td>
                                 </tr>
 

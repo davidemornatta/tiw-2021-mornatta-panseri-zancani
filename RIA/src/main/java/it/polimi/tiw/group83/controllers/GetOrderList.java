@@ -1,6 +1,8 @@
 package it.polimi.tiw.group83.controllers;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import it.polimi.tiw.group83.beans.Order;
 import it.polimi.tiw.group83.beans.Product;
 import it.polimi.tiw.group83.beans.User;
@@ -21,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/GoToOrders")
+@WebServlet("/GetOrderList")
 public class GetOrderList extends HttpServlet {
     private Connection connection = null;
 
@@ -61,11 +63,35 @@ public class GetOrderList extends HttpServlet {
             return;
         }
 
+        JsonObject resp = new JsonObject();
 
-        String json = new Gson().toJson(orderProducts);
+        for(Order order : orderProducts.keySet()) {
+            JsonArray prodQuantity = new JsonArray();
+            JsonObject orderTot = new JsonObject();
+
+            for(Map.Entry<Product, Integer> entry : orderProducts.get(order).entrySet()) {
+                JsonObject prod = new JsonObject();
+                prod.addProperty("name", entry.getKey().getName());
+                prod.addProperty("quantity", entry.getValue());
+                prodQuantity.add(prod);
+            }
+             orderTot.add("prodQuantity", prodQuantity);
+
+            JsonObject orderDetails = new JsonObject();
+            orderDetails.addProperty("orderCode",order.getCode());
+            orderDetails.addProperty("suppCode",order.getSupplierCode());
+            orderDetails.addProperty("totalAmount",order.getTotalAmount());
+            orderDetails.addProperty("shipppingDate", String.valueOf(order.getShippingDate()));
+            orderDetails.addProperty("shippingAddress",order.getShippingAddress());
+
+            orderTot.add("orderDetails",orderDetails);
+            resp.add(String.valueOf(order.getCode()),orderTot);
+        }
+
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(json);
+        response.getWriter().write(resp.toString());
     }
 
     public void destroy() {

@@ -3,7 +3,7 @@
     // Cart
     let cart;
     // page components
-    let navBar, alertContainer, alertText, home, searchResults, cartPage,
+    let navBar, alertContainer, alertText, home, searchResults, cartPage,orderPage,
         pageOrchestrator = new PageOrchestrator(); // main controller
 
     window.addEventListener("load", () => {
@@ -27,7 +27,7 @@
                 pageOrchestrator.navigateTo(cartPage)
             })
             document.getElementById("ordersLink").addEventListener('click', () => {
-                // pageOrchestrator.navigateTo(orders)
+                 pageOrchestrator.navigateTo(orderPage)
             })
             document.getElementById("logoutLink").addEventListener('click', () => {
                 window.sessionStorage.removeItem('username');
@@ -422,6 +422,118 @@
         }
     }
 
+
+    function OrderPage(_pageContainer, _listContainer) {
+        this.pageContainer = _pageContainer;
+        this.listContainer = _listContainer;
+
+
+
+        this.show = function () {
+            this.pageContainer.className = "";
+            let self = this;
+            makeCall("GET", "GetOrderList", null, function (req) {
+                if (req.readyState === XMLHttpRequest.DONE) {
+                    if (req.status === 200) {
+                        let orderProducts = JSON.parse(req.responseText);
+                        self.update(orderProducts);
+                    } else {
+                        alertText.textContent = req.responseText;
+                        alertContainer.className = "";
+                    }
+                }
+            })
+        }
+
+        this.update = function (orderProducts) {
+            console.log(orderProducts);
+            this.listContainer.innerHTML = "";
+            let self = this;
+            let orderList = document.createElement("ul");
+            orderList.className+="list-group list-group-flush lightGrey-text ";
+            let orders = orderProducts;
+            let liList = document.createElement("li");
+            for (const order in orders) {
+                let orderTable = document.createElement("table");
+                let orderDetails = document.createElement("tr");
+                let space = document.createElement("td");
+                space.style.width="10%";
+                let orderText = document.createElement("td");
+                orderText.style.width="25%";
+                let orderCode = document.createElement("ul");
+                orderCode.innerText = "Order Code: "+ orders[order].orderDetails.orderCode;
+                let suppCode = document.createElement("ul");
+                suppCode.innerText = "Supplier Code: " + orders[order].orderDetails.suppCode ;
+                let tot = document.createElement("ul");
+                tot.innerText = "Total: "+  orders[order].orderDetails.totalAmount ;
+                let shippingDate = document.createElement("ul");
+                shippingDate.innerText = "Shipping Date: " + orders[order].orderDetails.shippingDate;
+                let shippingAddress = document.createElement("ul");
+                shippingAddress.innerText = "Shipping Address: "+  orders[order].orderDetails.shippingAddress ;
+                orderText.appendChild(orderCode);
+                orderText.appendChild(suppCode);
+                orderText.appendChild(tot);
+                orderText.appendChild(shippingDate);
+                orderText.appendChild(shippingAddress);
+                orderDetails.appendChild(space);
+                orderDetails.appendChild(orderText);
+                orderDetails.appendChild(space);
+                orderTable.appendChild(orderDetails);
+
+                let ProdQCol= document.createElement("td");
+                let prodTable = document.createElement("table");
+                 prodTable.className+="table table-bordered lightGrey-text";
+                let tableHead = document.createElement("thead");
+                 tableHead.className+="lightBlue";
+                let columnNames = document.createElement("tr");
+                let c1 = document.createElement("th");
+                c1.innerText="Product";
+                let c2 = document.createElement("th");
+                c2.innerText="Quantity";
+                columnNames.appendChild(c1);
+                columnNames.appendChild(c2);
+                tableHead.appendChild(columnNames);
+                prodTable.appendChild(tableHead);
+
+                  let body = document.createElement("tbody");
+                  body.className+="table-light";
+
+                orders[order].prodQuantity.forEach(product => {
+                    let productsQTr = document.createElement("tr");
+                    let productName = document.createElement("td");
+                    productName.style.width="65%";
+                    productName.innerText = product.name;
+                    productsQTr.appendChild(productName);
+                    let productQuantity = document.createElement("td");
+                    productQuantity.innerText = product.quantity;
+                    productsQTr.appendChild(productQuantity);
+                    body.appendChild(productsQTr);
+                })
+
+                prodTable.appendChild(body);
+
+
+                ProdQCol.appendChild(prodTable);
+                orderDetails.appendChild(ProdQCol);
+                orderTable.appendChild(orderDetails);
+                liList.appendChild(orderTable);
+
+
+
+            }
+                orderList.appendChild(liList);
+                this.listContainer.appendChild(orderList);
+            }
+
+            this.reset = function () {
+                this.pageContainer.className = "hidden";
+            }
+        }
+
+
+
+
+
     function PageOrchestrator() {
         alertContainer = document.getElementById("alertBox");
         alertText = document.getElementById("alertText");
@@ -441,6 +553,8 @@
 
             cartPage = new CartPage(document.getElementById("cartPage"), document.getElementById("cartContainer"));
 
+            orderPage = new OrderPage(document.getElementById("orderPage"),document.getElementById("ordersContainer"));
+
             if(localStorage.getItem("cart") !== null) {
                 cart = JSON.parse(localStorage.getItem("cart"));
             } else {
@@ -457,6 +571,7 @@
             home.reset();
             searchResults.reset();
             cartPage.reset();
+            orderPage.reset();
             page.show(...args);
         }
     }
