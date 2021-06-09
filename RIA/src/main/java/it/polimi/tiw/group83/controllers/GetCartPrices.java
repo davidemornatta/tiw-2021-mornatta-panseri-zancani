@@ -32,25 +32,9 @@ public class GetCartPrices extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String jsonCart;
         Cart cart;
         try {
-            jsonCart = new String(Base64.getDecoder().decode(request.getParameter("cart")));
-
-            Map<Integer, Map<Integer, Integer>> cartContents = new HashMap<>();
-            JsonObject cartObj = JsonParser.parseString(jsonCart).getAsJsonObject();
-            for(String supplierCodeString : cartObj.keySet()) {
-                int supplierCode = Integer.parseInt(supplierCodeString);
-                JsonObject supplierProductsObj = cartObj.getAsJsonObject(supplierCodeString);
-                HashMap<Integer, Integer> productQuantities = new HashMap<>();
-                for(String productCodeString : supplierProductsObj.keySet()) {
-                    int productCode = Integer.parseInt(productCodeString);
-                    int quantity = supplierProductsObj.get(productCodeString).getAsInt();
-                    productQuantities.put(productCode, quantity);
-                }
-                cartContents.put(supplierCode, productQuantities);
-            }
-            cart = new Cart(cartContents);
+            cart = Cart.loadFromBase64(request.getParameter("cart"));
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Malformed cart parameter!");
@@ -59,10 +43,12 @@ public class GetCartPrices extends HttpServlet {
 
         JsonObject resp = new JsonObject();
         Map<String, Map<Product, Integer>> mapWithNames;
+        Map<String, Integer> supplierCodes;
         Map<String, Float> productsTotals;
         Map<String, Float> shippingCosts;
         try {
             mapWithNames = cart.findAllProducts(connection);
+            supplierCodes = cart.getAllSupplierCodes(connection);
             productsTotals = cart.findAllProductTotals(connection);
             shippingCosts = cart.getAllShippingCosts(connection);
         } catch (Exception e) {
@@ -74,8 +60,10 @@ public class GetCartPrices extends HttpServlet {
 
         for(String supplierName : mapWithNames.keySet()) {
             JsonObject supplierValue = new JsonObject();
-            JsonArray products = new JsonArray();
 
+            supplierValue.addProperty("code", supplierCodes.get(supplierName));
+
+            JsonArray products = new JsonArray();
             for(Map.Entry<Product, Integer> entry : mapWithNames.get(supplierName).entrySet()) {
                 JsonObject prod = new JsonObject();
                 prod.addProperty("name", entry.getKey().getName());
