@@ -1,8 +1,7 @@
 package it.polimi.tiw.group83.controllers;
 
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import it.polimi.tiw.group83.beans.Cart;
 import it.polimi.tiw.group83.beans.User;
 import it.polimi.tiw.group83.dao.OrderDAO;
 import it.polimi.tiw.group83.dao.SupplierDAO;
@@ -18,7 +17,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Calendar;
 
 @WebServlet("/CreateOrder")
 @MultipartConfig
@@ -33,50 +32,44 @@ public class CreateOrder extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
-
-        System.out.println(req.getParameter("supplier"));
-        System.out.println(new String(Base64.getDecoder().decode(req.getParameter("cart"))));
-
-        //TODO Implement
-
-        Gson gson = new Gson();
-
-        Date shippingDate = null;
         User user = (User) session.getAttribute("user");
-        String order = req.getParameter("order");
-        JsonObject jsonObject =gson.fromJson(order,JsonObject.class);
+
+        Cart cart;
+        try {
+            cart = Cart.loadFromBase64(req.getParameter("cart"));
+        } catch (Exception e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Malformed cart parameter!");
+            return;
+        }
+
+        String supplierCodeRaw = req.getParameter("supplier");
+        int supplierCode;
+        try {
+            supplierCode = Integer.parseInt(supplierCodeRaw);
+        } catch (Exception e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("No supplier code given");
+            return;
+        }
+
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         String supplierName;
-        int supplierCode;
-
-        float totalAmount = jsonObject.get("totalAmount").getAsFloat();
-
-
-        supplierCode = jsonObject.get("supplierCode").getAsInt();
-        Map<Integer,Integer> productList = new HashMap<>();
-        JsonObject map = jsonObject.get("productList").getAsJsonObject();
-        map.entrySet().forEach(entry -> {
-            Integer keyInt = Integer.parseInt(entry.getKey());
-            Integer valueInt = entry.getValue().getAsInt();
-            productList.put(keyInt,valueInt);
-        });
-
-
         OrderDAO orderDAO = new OrderDAO(connection);
         try {
-            orderDAO.createOrder(totalAmount ,
+            supplierName = supplierDAO.findSupplierByCode(supplierCode).getName();
+            orderDAO.createOrder(cart.findProductTotalFor(supplierCode, connection) + cart.getAllShippingCosts(connection).get(supplierName),
                     new java.sql.Date(Calendar.getInstance().getTime().getTime()),
                     user.getShippingAddress(),
                     supplierCode, user.getId(),
-                    productList);
+                    cart.findAllProductAndQuantitiesFor(supplierCode));
         } catch (SQLException e) {
-            e.printStackTrace();
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().println("Unable to process order");
             return;
         }
 
-        resp.setStatus(200);
+        resp.setStatus(HttpServletResponse.SC_OK);
     }
 
     public void destroy() {

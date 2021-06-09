@@ -32,25 +32,9 @@ public class GetCartPrices extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String jsonCart;
         Cart cart;
         try {
-            jsonCart = new String(Base64.getDecoder().decode(request.getParameter("cart")));
-
-            Map<Integer, Map<Integer, Integer>> cartContents = new HashMap<>();
-            JsonObject cartObj = JsonParser.parseString(jsonCart).getAsJsonObject();
-            for(String supplierCodeString : cartObj.keySet()) {
-                int supplierCode = Integer.parseInt(supplierCodeString);
-                JsonObject supplierProductsObj = cartObj.getAsJsonObject(supplierCodeString);
-                HashMap<Integer, Integer> productQuantities = new HashMap<>();
-                for(String productCodeString : supplierProductsObj.keySet()) {
-                    int productCode = Integer.parseInt(productCodeString);
-                    int quantity = supplierProductsObj.get(productCodeString).getAsInt();
-                    productQuantities.put(productCode, quantity);
-                }
-                cartContents.put(supplierCode, productQuantities);
-            }
-            cart = new Cart(cartContents);
+            cart = Cart.loadFromBase64(request.getParameter("cart"));
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Malformed cart parameter!");

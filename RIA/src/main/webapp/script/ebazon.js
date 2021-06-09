@@ -230,7 +230,7 @@
                     if (req.readyState === XMLHttpRequest.DONE) {
                         if (req.status === 200) {
                             self.prices = JSON.parse(req.responseText);
-                            self.createDetails(suppliers, self.prices, tbody);
+                            self.createDetails(product, suppliers, self.prices, tbody);
                         } else if (req.status === 401) {
                             sessionStorage.removeItem("username");
                             window.location.href = "index.html";
@@ -243,7 +243,7 @@
             }
         }
 
-        this.createDetails = function (suppliers, prices, tbody) {
+        this.createDetails = function (product, suppliers, prices, tbody) {
             suppliers.forEach(supplier => {
                 let row = document.createElement("tr");
 
@@ -290,10 +290,12 @@
                 }
                 productInCart.innerText = "" + productSum;
                 productInCart.onmouseover = function (mouseEvent) {
-                    supplierPopUp.appendChild(cartPage.buildSupplierCart(supplier.name, prices))
-                    supplierPopUp.style.left = mouseEvent.x + 'px';
-                    supplierPopUp.style.top = (mouseEvent.y-300) + 'px';
-                    supplierPopUp.className = "";
+                    if(prices[supplier.name] !== undefined) {
+                        supplierPopUp.appendChild(cartPage.buildSupplierCart(supplier.name, prices))
+                        supplierPopUp.style.left = mouseEvent.x + 'px';
+                        supplierPopUp.style.top = (mouseEvent.y-300) + 'px';
+                        supplierPopUp.className = "";
+                    }
                 }
                 productInCart.onmouseout = function () {
                     supplierPopUp.innerHTML = "";
@@ -307,7 +309,10 @@
                     if (req.readyState === XMLHttpRequest.DONE) {
                         if (req.status === 200) {
                             let prices = JSON.parse(req.responseText);
-                            totInCart.innerHTML = "&#36;" + prices[supplier.name].productsTotal;
+                            if(prices[supplier.name] !== undefined)
+                                totInCart.innerHTML = "&#36;" + prices[supplier.name].productsTotal;
+                            else
+                                totInCart.innerHTML = "&#36;0";
                         } else if (req.status === 401) {
                             sessionStorage.removeItem("username");
                             window.location.href = "index.html";
@@ -457,16 +462,16 @@
             productsTable.appendChild(productsTHead);
 
             let productsTBody = document.createElement("tbody");
-            let productsTBodyTr = document.createElement("tr");
             prices[supplier].products.forEach(product => {
+                let productsTBodyTr = document.createElement("tr");
                 let productsTBodyName = document.createElement("td");
                 productsTBodyName.innerText = product.name;
                 productsTBodyTr.appendChild(productsTBodyName);
                 let priceTBodyQuantity = document.createElement("td");
                 priceTBodyQuantity.innerText = product.quantity;
                 productsTBodyTr.appendChild(priceTBodyQuantity);
+                productsTBody.appendChild(productsTBodyTr);
             })
-            productsTBody.appendChild(productsTBodyTr);
             productsTable.appendChild(productsTBody);
 
             innerDiv.appendChild(productsTable);
@@ -488,9 +493,22 @@
                 orderBtn.className = "btn btn-primary";
                 orderBtn.type = "button";
                 orderBtn.innerText = "Order";
-                orderBtn.addEventListener('click', () => {
-                    makeCall("POST", "CreateOrder", orderForm, function () {
 
+                orderBtn.addEventListener('click', () => {
+                    makeCall("POST", "CreateOrder", orderForm, function (req) {
+                        if (req.readyState === XMLHttpRequest.DONE) {
+                            if (req.status === 200) {
+                                delete cart[prices[supplier].code];
+                                localStorage.setItem("cart", JSON.stringify(cart));
+                                // pageOrchestrator.navigateTo(orders);
+                            } else if (req.status === 401) {
+                                sessionStorage.removeItem("username");
+                                window.location.href = "index.html";
+                            } else {
+                                alertText.textContent = req.responseText;
+                                alertContainer.className = "";
+                            }
+                        }
                     });
                 });
                 orderForm.appendChild(orderBtn);

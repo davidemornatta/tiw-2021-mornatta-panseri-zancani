@@ -1,9 +1,12 @@
 package it.polimi.tiw.group83.beans;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import it.polimi.tiw.group83.dao.PriceRangeDAO;
 import it.polimi.tiw.group83.dao.ProductDAO;
 import it.polimi.tiw.group83.dao.SupplierDAO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -122,6 +125,32 @@ public class Cart {
         }
 
         return shippingCosts;
+    }
+
+    public Map<Integer, Integer> findAllProductAndQuantitiesFor(int supplierCode) {
+        return new HashMap<>(supplierProductsMap.get(supplierCode));
+    }
+
+    public static Cart loadFromBase64(String base64) throws RuntimeException {
+        if (base64 == null)
+            throw new IllegalArgumentException("Base64 cart can't be null");
+
+        String jsonCart = new String(Base64.getDecoder().decode(base64));
+
+        Map<Integer, Map<Integer, Integer>> cartContents = new HashMap<>();
+        JsonObject cartObj = JsonParser.parseString(jsonCart).getAsJsonObject();
+        for(String supplierCodeString : cartObj.keySet()) {
+            int supplierCode = Integer.parseInt(supplierCodeString);
+            JsonObject supplierProductsObj = cartObj.getAsJsonObject(supplierCodeString);
+            HashMap<Integer, Integer> productQuantities = new HashMap<>();
+            for(String productCodeString : supplierProductsObj.keySet()) {
+                int productCode = Integer.parseInt(productCodeString);
+                int quantity = supplierProductsObj.get(productCodeString).getAsInt();
+                productQuantities.put(productCode, quantity);
+            }
+            cartContents.put(supplierCode, productQuantities);
+        }
+        return new Cart(cartContents);
     }
 
     @Override
