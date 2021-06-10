@@ -22,13 +22,11 @@
     <div>
         <ul class="list-group list-group-flush lightGrey-text ">
             <li  th:each="order : ${orders}">
-                <table>
+                <table class="order-table">
                     <tr>
 
-                        <td width = "5%"></td>
-
-
-                        <td width = "25%">
+                        <td width="5%"></td>
+                        <td class="order-text">
                             Order code: <span th:text="${order.code}"></span>
                             <br>
                             Supplier Code: <span th:text="${order.supplierCode}"></span>

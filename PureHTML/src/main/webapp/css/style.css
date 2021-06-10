@@ -81,3 +81,18 @@
 .shopping-cart form {
     text-align: center;
 }
+.order-table {
+    padding-bottom: 25px;
+    padding-top: 25px;
+    padding-right: 10px;
+    border-collapse: unset;
+    border-top: double;
+    border-top-color : #ffc107;
+    width:100%;
+}
+.order-text {
+    width:25%;
+}
+.product-col {
+    width:65%;
+}

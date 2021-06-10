@@ -552,16 +552,15 @@
             this.listContainer.innerHTML = "";
             let self = this;
             let orderList = document.createElement("ul");
-            orderList.className+="list-group list-group-flush lightGrey-text ";
+            orderList.className+="list-group lightGrey-text ";
             let orders = orderProducts;
             let liList = document.createElement("li");
             for (const order in orders) {
                 let orderTable = document.createElement("table");
+                orderTable.className+="order-table";
                 let orderDetails = document.createElement("tr");
-                let space = document.createElement("td");
-                space.style.width="10%";
                 let orderText = document.createElement("td");
-                orderText.style.width="25%";
+                orderText.className+="order-text"
                 let orderCode = document.createElement("ul");
                 orderCode.innerText = "Order Code: "+ orders[order].orderDetails.orderCode;
                 let suppCode = document.createElement("ul");
@@ -577,9 +576,7 @@
                 orderText.appendChild(tot);
                 orderText.appendChild(shippingDate);
                 orderText.appendChild(shippingAddress);
-                orderDetails.appendChild(space);
                 orderDetails.appendChild(orderText);
-                orderDetails.appendChild(space);
                 orderTable.appendChild(orderDetails);
 
                 let ProdQCol= document.createElement("td");
@@ -603,7 +600,7 @@
                 orders[order].prodQuantity.forEach(product => {
                     let productsQTr = document.createElement("tr");
                     let productName = document.createElement("td");
-                    productName.style.width="65%";
+                    productName.className+="product-col";;
                     productName.innerText = product.name;
                     productsQTr.appendChild(productName);
                     let productQuantity = document.createElement("td");
