@@ -31,7 +31,7 @@ public class PriceRange {
 
     @Override
     public String toString() {
-        return  "minArticles=" + minArticles +
+        return "minArticles=" + minArticles +
                 ", maxArticles=" + maxArticles +
                 ", shippingCost=" + shippingCost;
     }

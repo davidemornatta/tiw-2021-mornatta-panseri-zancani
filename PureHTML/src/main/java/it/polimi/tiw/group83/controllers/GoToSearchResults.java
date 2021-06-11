@@ -5,8 +5,6 @@ import it.polimi.tiw.group83.dao.PriceRangeDAO;
 import it.polimi.tiw.group83.dao.ProductDAO;
 import it.polimi.tiw.group83.dao.SupplierDAO;
 import it.polimi.tiw.group83.dao.UserDAO;
-import it.polimi.tiw.group83.beans.*;
-import it.polimi.tiw.group83.dao.*;
 import it.polimi.tiw.group83.utils.ConnectionHandler;
 import it.polimi.tiw.group83.utils.TemplateUtils;
 import org.thymeleaf.TemplateEngine;
@@ -61,7 +59,7 @@ public class GoToSearchResults extends HttpServlet {
 
         String selectedCode = request.getParameter("selectedCode");
         boolean isProductSelected = false;
-        if(selectedCode != null && !selectedCode.isEmpty()) {
+        if (selectedCode != null && !selectedCode.isEmpty()) {
             int productCode;
             try {
                 productCode = Integer.parseInt(selectedCode);
@@ -73,7 +71,7 @@ public class GoToSearchResults extends HttpServlet {
             Product selectedProduct;
             try {
                 selectedProduct = productDAO.findProductByCode(productCode);
-                if(selectedProduct == null)
+                if (selectedProduct == null)
                     throw new RuntimeException();
             } catch (Exception e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Cannot find product with given code");
@@ -89,7 +87,7 @@ public class GoToSearchResults extends HttpServlet {
 
             SupplierDAO supplierDAO = new SupplierDAO(connection);
             try {
-                suppliers = supplierDAO.findAllSuppliers(productCode);
+                suppliers = supplierDAO.findAllSuppliersFor(productCode);
 
                 PriceRangeDAO priceRangeDAO = new PriceRangeDAO(connection);
                 for (Supplier s : suppliers) {

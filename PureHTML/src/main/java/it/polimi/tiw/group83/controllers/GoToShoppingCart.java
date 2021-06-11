@@ -55,7 +55,7 @@ public class GoToShoppingCart extends HttpServlet {
             return;
         }
         Map<String, Integer> supplierQuantities = new HashMap<>();
-        for(String supplier : supplierProducts.keySet()) {
+        for (String supplier : supplierProducts.keySet()) {
             Optional<Integer> quantity = supplierProducts.get(supplier).values().stream().reduce(Integer::sum);
             supplierQuantities.put(supplier, quantity.orElse(-1));
         }

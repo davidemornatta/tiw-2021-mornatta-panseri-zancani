@@ -14,7 +14,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
 
 @WebServlet("/UpdateCart")
 public class UpdateCart extends HttpServlet {
@@ -42,7 +41,7 @@ public class UpdateCart extends HttpServlet {
         }
         ProductDAO productDAO = new ProductDAO(connection);
         try {
-            if(productDAO.findProductByCode(productCode) == null) {
+            if (productDAO.findProductByCode(productCode) == null) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid productCode parameter");
                 return;
             }
@@ -69,7 +68,7 @@ public class UpdateCart extends HttpServlet {
         }
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         try {
-            if(supplierDAO.findSupplierByCode(supplierCode) == null) {
+            if (supplierDAO.findSupplierByCode(supplierCode) == null) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid supplierCode parameter");
                 return;
             }
@@ -80,7 +79,7 @@ public class UpdateCart extends HttpServlet {
         }
 
         try {
-            if(supplierDAO.findProductsTotal(supplierCode, Collections.singletonList(productCode)) == -1) {
+            if (!productDAO.isProductSoldBy(productCode, supplierCode)) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Supplier does not sell product");
                 return;
             }
@@ -92,13 +91,7 @@ public class UpdateCart extends HttpServlet {
 
 
         Cart cart = (Cart) session.getAttribute("cart");
-        try {
-            cart.addProduct(supplierCode, productCode, quantity);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to add item in cart");
-            return;
-        }
+        cart.addProduct(supplierCode, productCode, quantity);
 
         String path = getServletContext().getContextPath() + "/GoToShoppingCart";
         resp.sendRedirect(path);

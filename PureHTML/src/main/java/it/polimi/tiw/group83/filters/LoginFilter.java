@@ -14,7 +14,7 @@ public class LoginFilter implements Filter {
 
         String loginpath = req.getServletContext().getContextPath() + "/index.html";
         HttpSession session = req.getSession();
-        if(session.getAttribute("user") == null) {
+        if (session.getAttribute("user") == null) {
             res.sendRedirect(loginpath);
             return;
         }

@@ -1,18 +1,5 @@
 package it.polimi.tiw.group83.controllers;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import it.polimi.tiw.group83.beans.Product;
 import it.polimi.tiw.group83.beans.User;
 import it.polimi.tiw.group83.dao.ProductDAO;
@@ -22,9 +9,20 @@ import it.polimi.tiw.group83.utils.TemplateUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
 @WebServlet("/GoToHome")
 public class GoToHome extends HttpServlet {
-    private static final long serialVersionUID = 1L;
     private TemplateEngine templateEngine;
     private Connection connection = null;
 
@@ -48,7 +46,7 @@ public class GoToHome extends HttpServlet {
 
         try {
             lastViewed = userDAO.findLastFiveViewedBy(user.getId());
-            if(lastViewed.size() < 5) {
+            if (lastViewed.size() < 5) {
                 ProductDAO productDAO = new ProductDAO(connection);
                 lastViewed.addAll(productDAO.findRandomProducts(5 - lastViewed.size()));
             }

@@ -1,4 +1,5 @@
 package it.polimi.tiw.group83.controllers;
+
 import it.polimi.tiw.group83.beans.Cart;
 import it.polimi.tiw.group83.beans.User;
 import it.polimi.tiw.group83.dao.UserDAO;
@@ -7,8 +8,6 @@ import it.polimi.tiw.group83.utils.TemplateUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -75,7 +74,7 @@ public class CheckLogin extends HttpServlet {
         } else {
             request.getSession().setAttribute("user", user);
 
-            if(request.getSession().getAttribute("cart") == null)
+            if (request.getSession().getAttribute("cart") == null)
                 request.getSession().setAttribute("cart", new Cart());
 
             path = getServletContext().getContextPath() + "/GoToHome";

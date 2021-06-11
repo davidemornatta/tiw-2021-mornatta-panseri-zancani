@@ -2,7 +2,6 @@ package it.polimi.tiw.group83.controllers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.tiw.group83.beans.PriceRange;
 import it.polimi.tiw.group83.beans.Product;
@@ -77,7 +76,7 @@ public class GetProductDetailsData extends HttpServlet {
 
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         try {
-            suppliers = supplierDAO.findAllSuppliers(productCode);
+            suppliers = supplierDAO.findAllSuppliersFor(productCode);
 
             PriceRangeDAO priceRangeDAO = new PriceRangeDAO(connection);
             for (Supplier s : suppliers) {
@@ -101,7 +100,7 @@ public class GetProductDetailsData extends HttpServlet {
         JsonObject object = new JsonObject();
         object.add("product", gson.toJsonTree(selectedProduct));
         JsonArray array = new JsonArray();
-        for(Supplier supplier : suppliers) {
+        for (Supplier supplier : suppliers) {
             JsonObject sup = gson.toJsonTree(supplier).getAsJsonObject();
             sup.addProperty("price", supplierPrice.get(supplier));
             sup.add("priceRanges", gson.toJsonTree(ranges.get(supplier)));

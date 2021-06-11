@@ -1,6 +1,5 @@
 package it.polimi.tiw.group83.controllers;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.polimi.tiw.group83.beans.Order;
@@ -9,7 +8,6 @@ import it.polimi.tiw.group83.beans.User;
 import it.polimi.tiw.group83.dao.OrderDAO;
 import it.polimi.tiw.group83.utils.ConnectionHandler;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -40,15 +38,15 @@ public class GetOrderList extends HttpServlet {
         OrderDAO orderDAO = new OrderDAO(connection);
         List<Order> orders;
         Map<Product, Integer> products;
-        Map<Order,Map<Product, Integer>> orderProducts = new HashMap<>();
+        Map<Order, Map<Product, Integer>> orderProducts = new HashMap<>();
 
 
         try {
             orders = orderDAO.findUserOrders(user.getId());
-            for(Order o: orders){
+            for (Order o : orders) {
                 try {
                     products = orderDAO.findAllProductsInOrder(o.getCode());
-                    orderProducts.put(o,products);
+                    orderProducts.put(o, products);
                 } catch (SQLException e) {
                     e.printStackTrace();
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -65,27 +63,27 @@ public class GetOrderList extends HttpServlet {
 
         JsonObject resp = new JsonObject();
 
-        for(Order order : orderProducts.keySet()) {
+        for (Order order : orderProducts.keySet()) {
             JsonArray prodQuantity = new JsonArray();
             JsonObject orderTot = new JsonObject();
 
-            for(Map.Entry<Product, Integer> entry : orderProducts.get(order).entrySet()) {
+            for (Map.Entry<Product, Integer> entry : orderProducts.get(order).entrySet()) {
                 JsonObject prod = new JsonObject();
                 prod.addProperty("name", entry.getKey().getName());
                 prod.addProperty("quantity", entry.getValue());
                 prodQuantity.add(prod);
             }
-             orderTot.add("prodQuantity", prodQuantity);
+            orderTot.add("prodQuantity", prodQuantity);
 
             JsonObject orderDetails = new JsonObject();
-            orderDetails.addProperty("orderCode",order.getCode());
-            orderDetails.addProperty("suppCode",order.getSupplierCode());
-            orderDetails.addProperty("totalAmount",order.getTotalAmount());
+            orderDetails.addProperty("orderCode", order.getCode());
+            orderDetails.addProperty("suppCode", order.getSupplierCode());
+            orderDetails.addProperty("totalAmount", order.getTotalAmount());
             orderDetails.addProperty("shipppingDate", String.valueOf(order.getShippingDate()));
-            orderDetails.addProperty("shippingAddress",order.getShippingAddress());
+            orderDetails.addProperty("shippingAddress", order.getShippingAddress());
 
-            orderTot.add("orderDetails",orderDetails);
-            resp.add(String.valueOf(order.getCode()),orderTot);
+            orderTot.add("orderDetails", orderDetails);
+            resp.add(String.valueOf(order.getCode()), orderTot);
         }
 
 

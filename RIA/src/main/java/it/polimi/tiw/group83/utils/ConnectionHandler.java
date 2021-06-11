@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class ConnectionHandler {
 
     public static Connection getConnection(ServletContext context) throws UnavailableException {
-        Connection connection = null;
+        Connection connection;
         try {
 
             String driver = context.getInitParameter("dbDriver");

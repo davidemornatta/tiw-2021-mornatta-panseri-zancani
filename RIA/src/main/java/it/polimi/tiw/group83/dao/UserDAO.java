@@ -49,21 +49,21 @@ public class UserDAO {
                 }
             }
         }
-      return products;
+        return products;
     }
 
-    public void addViewToProductFrom(int userId, int productCode, Timestamp date) throws SQLException {
+    public void addViewToProductFrom(int userId, int productCode, Timestamp timestamp) throws SQLException {
         int i;
         String query = "INSERT into recently_viewed (user_id, product_code, time) VALUES(?, ?, ?)";
         con.setAutoCommit(false);
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
             pstatement.setInt(1, userId);
             pstatement.setInt(2, productCode);
-            pstatement.setTimestamp(3, date);
+            pstatement.setTimestamp(3, timestamp);
             i = pstatement.executeUpdate();
         }
-        if(i == 0)
-            throw  new SQLException();
+        if (i == 0)
+            throw new SQLException();
         con.commit();
     }
 }

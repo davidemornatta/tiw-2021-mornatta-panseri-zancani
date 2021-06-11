@@ -305,23 +305,12 @@
 
                 let totInCart = document.createElement("td");
                 totInCart.className = "align-content-center";
-                makeCall("GET", "GetCartPrices?cart=" + btoa(JSON.stringify(cart)), null, function (req) {
-                    if (req.readyState === XMLHttpRequest.DONE) {
-                        if (req.status === 200) {
-                            let prices = JSON.parse(req.responseText);
-                            if(prices[supplier.name] !== undefined)
-                                totInCart.innerHTML = "&#36;" + prices[supplier.name].productsTotal;
-                            else
-                                totInCart.innerHTML = "&#36;0";
-                        } else if (req.status === 401) {
-                            sessionStorage.removeItem("username");
-                            window.location.href = "index.html";
-                        } else {
-                            alertText.textContent = req.responseText;
-                            alertContainer.className = "";
-                        }
-                    }
-                })
+
+                if(prices[supplier.name] !== undefined)
+                    totInCart.innerHTML = "&#36;" + prices[supplier.name].productsTotal;
+                else
+                    totInCart.innerHTML = "&#36;0";
+
                 row.appendChild(totInCart);
 
                 let formTd = document.createElement("td");
@@ -529,8 +518,6 @@
         this.pageContainer = _pageContainer;
         this.listContainer = _listContainer;
 
-
-
         this.show = function () {
             this.pageContainer.className = "";
             let self = this;
@@ -550,12 +537,14 @@
         this.update = function (orderProducts) {
             console.log(orderProducts);
             this.listContainer.innerHTML = "";
-            let self = this;
             let orderList = document.createElement("ul");
             orderList.className+="list-group lightGrey-text ";
             let orders = orderProducts;
             let liList = document.createElement("li");
             for (const order in orders) {
+                if(!orders.hasOwnProperty(order))
+                    continue;
+
                 let orderTable = document.createElement("table");
                 orderTable.className+="order-table";
                 let orderDetails = document.createElement("tr");
@@ -600,7 +589,7 @@
                 orders[order].prodQuantity.forEach(product => {
                     let productsQTr = document.createElement("tr");
                     let productName = document.createElement("td");
-                    productName.className+="product-col";;
+                    productName.className+="product-col";
                     productName.innerText = product.name;
                     productsQTr.appendChild(productName);
                     let productQuantity = document.createElement("td");
@@ -620,18 +609,14 @@
 
 
             }
-                orderList.appendChild(liList);
-                this.listContainer.appendChild(orderList);
-            }
-
-            this.reset = function () {
-                this.pageContainer.className = "hidden";
-            }
+            orderList.appendChild(liList);
+            this.listContainer.appendChild(orderList);
         }
 
-
-
-
+        this.reset = function () {
+            this.pageContainer.className = "hidden";
+        }
+    }
 
     function PageOrchestrator() {
         alertContainer = document.getElementById("alertBox");

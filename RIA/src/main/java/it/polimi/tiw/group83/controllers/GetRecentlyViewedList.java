@@ -6,6 +6,7 @@ import it.polimi.tiw.group83.beans.User;
 import it.polimi.tiw.group83.dao.ProductDAO;
 import it.polimi.tiw.group83.dao.UserDAO;
 import it.polimi.tiw.group83.utils.ConnectionHandler;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,7 +40,7 @@ public class GetRecentlyViewedList extends HttpServlet {
 
         try {
             lastViewed = userDAO.findLastFiveViewedBy(user.getId());
-            if(lastViewed.size() < 5) {
+            if (lastViewed.size() < 5) {
                 ProductDAO productDAO = new ProductDAO(connection);
                 lastViewed.addAll(productDAO.findRandomProducts(5 - lastViewed.size()));
             }

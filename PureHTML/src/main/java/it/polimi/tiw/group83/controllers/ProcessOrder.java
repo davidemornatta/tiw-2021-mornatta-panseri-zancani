@@ -41,7 +41,7 @@ public class ProcessOrder extends HttpServlet {
         String supplierName;
         int supplierCode;
         try {
-            if(supplierCodeRaw == null)
+            if (supplierCodeRaw == null)
                 throw new RuntimeException();
             supplierCode = Integer.parseInt(supplierCodeRaw);
         } catch (Exception e) {

@@ -8,6 +8,7 @@ import it.polimi.tiw.group83.utils.ConnectionHandler;
 import it.polimi.tiw.group83.utils.TemplateUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -41,15 +42,15 @@ public class GoToOrders extends HttpServlet {
         OrderDAO orderDAO = new OrderDAO(connection);
         List<Order> orders;
         Map<Product, Integer> products;
-        Map<Order,Map<Product, Integer>> orderProducts = new HashMap<>();
+        Map<Order, Map<Product, Integer>> orderProducts = new HashMap<>();
 
 
         try {
             orders = orderDAO.findUserOrders(user.getId());
-            for(Order o: orders){
+            for (Order o : orders) {
                 try {
                     products = orderDAO.findAllProductsInOrder(o.getCode());
-                    orderProducts.put(o,products);
+                    orderProducts.put(o, products);
                 } catch (SQLException e) {
                     e.printStackTrace();
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to find products");
@@ -77,8 +78,6 @@ public class GoToOrders extends HttpServlet {
             e.printStackTrace();
         }
     }
-
-
 
 
 }

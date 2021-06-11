@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -46,7 +45,7 @@ public class GetSearchResultsData extends HttpServlet {
 
         Gson gson = new Gson();
         JsonArray array = new JsonArray();
-        for(Map.Entry<Product, Float> entry : products.entrySet()) {
+        for (Map.Entry<Product, Float> entry : products.entrySet()) {
             JsonObject object = new JsonObject();
             object.add("product", gson.toJsonTree(entry.getKey()));
             object.addProperty("price", entry.getValue());

@@ -6,7 +6,6 @@ import it.polimi.tiw.group83.dao.PriceRangeDAO;
 import it.polimi.tiw.group83.dao.ProductDAO;
 import it.polimi.tiw.group83.dao.SupplierDAO;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -31,7 +30,7 @@ public class Cart {
 
     public float findProductTotalFor(int supplierCode, Connection connection) throws SQLException {
         SupplierDAO supplierDAO = new SupplierDAO(connection);
-        int total = 0;
+        float total = 0;
         if (supplierProductsMap.containsKey(supplierCode)) {
             total = supplierDAO.findProductsTotalWithQuantities(supplierCode, supplierProductsMap.get(supplierCode));
         }
@@ -60,7 +59,7 @@ public class Cart {
     public Map<String, Integer> getAllSupplierCodes(Connection connection) throws SQLException {
         Map<String, Integer> supplierCodes = new HashMap<>();
         SupplierDAO supplierDAO = new SupplierDAO(connection);
-        for(int supplierCode : supplierProductsMap.keySet()) {
+        for (int supplierCode : supplierProductsMap.keySet()) {
             String name = supplierDAO.findSupplierByCode(supplierCode).getName();
             supplierCodes.put(name, supplierCode);
         }
@@ -139,11 +138,11 @@ public class Cart {
 
         Map<Integer, Map<Integer, Integer>> cartContents = new HashMap<>();
         JsonObject cartObj = JsonParser.parseString(jsonCart).getAsJsonObject();
-        for(String supplierCodeString : cartObj.keySet()) {
+        for (String supplierCodeString : cartObj.keySet()) {
             int supplierCode = Integer.parseInt(supplierCodeString);
             JsonObject supplierProductsObj = cartObj.getAsJsonObject(supplierCodeString);
             HashMap<Integer, Integer> productQuantities = new HashMap<>();
-            for(String productCodeString : supplierProductsObj.keySet()) {
+            for (String productCodeString : supplierProductsObj.keySet()) {
                 int productCode = Integer.parseInt(productCodeString);
                 int quantity = supplierProductsObj.get(productCodeString).getAsInt();
                 productQuantities.put(productCode, quantity);

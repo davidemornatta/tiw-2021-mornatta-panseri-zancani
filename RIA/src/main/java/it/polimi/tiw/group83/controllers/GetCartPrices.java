@@ -2,7 +2,6 @@ package it.polimi.tiw.group83.controllers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import it.polimi.tiw.group83.beans.Cart;
 import it.polimi.tiw.group83.beans.Product;
 import it.polimi.tiw.group83.utils.ConnectionHandler;
@@ -16,8 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet("/GetCartPrices")
@@ -58,13 +55,13 @@ public class GetCartPrices extends HttpServlet {
             return;
         }
 
-        for(String supplierName : mapWithNames.keySet()) {
+        for (String supplierName : mapWithNames.keySet()) {
             JsonObject supplierValue = new JsonObject();
 
             supplierValue.addProperty("code", supplierCodes.get(supplierName));
 
             JsonArray products = new JsonArray();
-            for(Map.Entry<Product, Integer> entry : mapWithNames.get(supplierName).entrySet()) {
+            for (Map.Entry<Product, Integer> entry : mapWithNames.get(supplierName).entrySet()) {
                 JsonObject prod = new JsonObject();
                 prod.addProperty("name", entry.getKey().getName());
                 prod.addProperty("quantity", entry.getValue());

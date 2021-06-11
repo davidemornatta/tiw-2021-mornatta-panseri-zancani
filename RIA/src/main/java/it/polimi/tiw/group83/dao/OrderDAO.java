@@ -22,7 +22,7 @@ public class OrderDAO {
         con.setAutoCommit(false);
         String query = "INSERT INTO `order` (total_amount, shipping_date, shipping_address, supplier_code, user_id) VALUES (?, ?, ?, ?, ?)";
         int generatedCode;
-        try(PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setFloat(1, totalAmount);
             preparedStatement.setDate(2, shippingDate);
             preparedStatement.setString(3, shippingAddress);
@@ -30,7 +30,7 @@ public class OrderDAO {
             preparedStatement.setInt(5, userId);
 
             int inserted = preparedStatement.executeUpdate();
-            if(inserted == 0) {
+            if (inserted == 0) {
                 con.rollback();
                 throw new SQLException();
             }
@@ -43,9 +43,9 @@ public class OrderDAO {
         StringBuilder sb = new StringBuilder("INSERT INTO order_contains (order_code, product_code, quantity) VALUES ");
         productList.keySet().forEach(key -> sb.append("(?, ?, ?),"));
         sb.deleteCharAt(sb.length() - 1);
-        try(PreparedStatement preparedStatement = con.prepareStatement(sb.toString())) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(sb.toString())) {
             int index = 1;
-            for(int productCode : productList.keySet()) {
+            for (int productCode : productList.keySet()) {
                 preparedStatement.setInt(index, generatedCode);
                 preparedStatement.setInt(index + 1, productCode);
                 preparedStatement.setInt(index + 2, productList.get(productCode));
@@ -53,7 +53,7 @@ public class OrderDAO {
             }
 
             int inserted = preparedStatement.executeUpdate();
-            if(inserted == 0) {
+            if (inserted == 0) {
                 con.rollback();
                 throw new SQLException();
             }
@@ -65,11 +65,11 @@ public class OrderDAO {
     public List<Order> findUserOrders(int userId) throws SQLException {
         String query = "SELECT * FROM `order` WHERE user_id = ? ORDER BY shipping_date DESC";
         List<Order> orders = new ArrayList<>();
-        try(PreparedStatement preparedStatement = con.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setInt(1, userId);
 
-            try(ResultSet result = preparedStatement.executeQuery()) {
-                if(!result.isBeforeFirst())
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (!result.isBeforeFirst())
                     return orders;
                 else {
                     while (result.next()) {
@@ -91,11 +91,11 @@ public class OrderDAO {
     public Map<Product, Integer> findAllProductsInOrder(int orderCode) throws SQLException, IOException {
         String query = "SELECT * FROM order_contains JOIN product p on p.code = order_contains.product_code WHERE order_code = ?";
         Map<Product, Integer> products = new HashMap<>();
-        try(PreparedStatement preparedStatement = con.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setInt(1, orderCode);
 
-            try(ResultSet result = preparedStatement.executeQuery()) {
-                if(!result.isBeforeFirst())
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (!result.isBeforeFirst())
                     return products;
                 else {
                     while (result.next()) {
@@ -106,9 +106,4 @@ public class OrderDAO {
         }
         return products;
     }
-
-
-
-
-
 }

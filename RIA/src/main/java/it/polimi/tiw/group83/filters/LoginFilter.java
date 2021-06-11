@@ -13,7 +13,7 @@ public class LoginFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) servletResponse;
 
         HttpSession session = req.getSession();
-        if(session.getAttribute("user") == null) {
+        if (session.getAttribute("user") == null) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }

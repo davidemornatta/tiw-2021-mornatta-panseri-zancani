@@ -18,7 +18,7 @@ public class ProductDAO {
         this.con = connection;
     }
 
-    public static Product createProductBean(ResultSet result) throws SQLException, IOException{
+    public static Product createProductBean(ResultSet result) throws SQLException, IOException {
         Product product = new Product();
         product.setCode(result.getInt("code"));
         product.setName(result.getString("name"));
@@ -44,27 +44,6 @@ public class ProductDAO {
         }
     }
 
-    public List<Product> searchForProduct(String searchQuery) throws SQLException, IOException{
-        String query = "SELECT  * FROM product" +
-                " WHERE name LIKE '%?%' OR description LIKE '%?%' OR category LIKE '%?%'";
-        List<Product> searchResult = new ArrayList<>();
-        try (PreparedStatement pstatement = con.prepareStatement(query)) {
-            pstatement.setString(1, searchQuery);
-            pstatement.setString(2, searchQuery);
-            pstatement.setString(3, searchQuery);
-            try (ResultSet result = pstatement.executeQuery()) {
-                if (!result.isBeforeFirst()) // no results, product not found
-                    return searchResult;
-                else {
-                    while(result.next()) {
-                        searchResult.add(createProductBean(result));
-                    }
-                }
-            }
-        }
-        return searchResult;
-    }
-
     public Map<Product, Float> searchForProductOrdered(String searchQuery) throws SQLException, IOException {
         String query = "SELECT code, name, description, category, image, min(price) AS 'price'  " +
                 "FROM product JOIN sells ON code = product_code " +
@@ -80,7 +59,7 @@ public class ProductDAO {
                 if (!result.isBeforeFirst()) // no results, product not found
                     return new HashMap<>();
                 else {
-                    while(result.next()) {
+                    while (result.next()) {
                         searchResult.put(createProductBean(result), result.getFloat("price"));
                     }
                 }
@@ -89,20 +68,17 @@ public class ProductDAO {
         return searchResult;
     }
 
-
-
-
     public List<Product> findAllProductsByCodes(List<Integer> productCodes) throws SQLException, IOException {
         StringBuilder sb = new StringBuilder("SELECT * FROM product WHERE code IN (");
         productCodes.forEach(code -> sb.append("?,"));
         sb.deleteCharAt(sb.length() - 1);
         sb.append(")");
         List<Product> products = new ArrayList<>();
-        try(PreparedStatement preparedStatement = con.prepareStatement(sb.toString())) {
-            for(int i = 0; i < productCodes.size(); i++) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(sb.toString())) {
+            for (int i = 0; i < productCodes.size(); i++) {
                 preparedStatement.setInt(i + 1, productCodes.get(i));
             }
-            try(ResultSet result = preparedStatement.executeQuery()) {
+            try (ResultSet result = preparedStatement.executeQuery()) {
                 while (result.next()) {
                     products.add(createProductBean(result));
                 }
@@ -113,10 +89,10 @@ public class ProductDAO {
 
     public boolean isProductSoldBy(int productCode, int supplierCode) throws SQLException {
         String query = "SELECT product_code FROM sells WHERE product_code = ? AND supplier_code = ?";
-        try(PreparedStatement preparedStatement = con.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setInt(1, productCode);
             preparedStatement.setInt(2, supplierCode);
-            try(ResultSet result = preparedStatement.executeQuery()) {
+            try (ResultSet result = preparedStatement.executeQuery()) {
                 return result.isBeforeFirst();
             }
         }
@@ -124,16 +100,16 @@ public class ProductDAO {
 
     public float getProductPriceFor(int productCode, int supplierCode) throws SQLException {
         String query = "SELECT price FROM sells WHERE product_code = ? AND supplier_code = ?";
-        try(PreparedStatement preparedStatement = con.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setInt(1, productCode);
             preparedStatement.setInt(2, supplierCode);
-            try(ResultSet result = preparedStatement.executeQuery()) {
-               if(!result.isBeforeFirst()) {
-                   return -1;
-               } else {
-                   result.next();
-                   return result.getInt("price");
-               }
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (!result.isBeforeFirst()) {
+                    return -1;
+                } else {
+                    result.next();
+                    return result.getFloat("price");
+                }
             }
         }
     }
@@ -141,10 +117,10 @@ public class ProductDAO {
     public Collection<? extends Product> findRandomProducts(int quantity) throws SQLException, IOException {
         String query = "SELECT  * FROM product WHERE category = 'Technology' LIMIT ?";
         List<Product> products = new ArrayList<>();
-        try(PreparedStatement preparedStatement = con.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setInt(1, quantity);
 
-            try(ResultSet result = preparedStatement.executeQuery()) {
+            try (ResultSet result = preparedStatement.executeQuery()) {
                 while (result.next()) {
                     products.add(createProductBean(result));
                 }

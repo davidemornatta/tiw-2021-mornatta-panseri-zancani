@@ -48,8 +48,7 @@ public class Product {
     public String getImage() throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ImageIO.write(this.image, "png", output);
-        String imageAsBase64 = Base64.getEncoder().encodeToString(output.toByteArray());
-        return imageAsBase64;
+        return Base64.getEncoder().encodeToString(output.toByteArray());
     }
 
     public void setImage(BufferedImage image) {
