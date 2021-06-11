@@ -136,7 +136,8 @@ public class Cart {
         Map<String, Float> shippingCosts = new HashMap<>();
 
         for (int supplierCode : supplierProductsMap.keySet()) {
-            shippingCosts.entrySet().add(calculateShippingTotal(supplierCode, con));
+            Map.Entry<String, Float> cost = calculateShippingTotal(supplierCode, con);
+            shippingCosts.put(cost.getKey(), cost.getValue());
         }
 
         return shippingCosts;
