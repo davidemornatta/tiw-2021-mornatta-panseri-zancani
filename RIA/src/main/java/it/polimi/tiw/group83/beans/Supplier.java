@@ -4,7 +4,7 @@ public class Supplier {
     private int code;
     private String name;
     private int rating;
-    private int freeShippingCost;
+    private float freeShippingCost;
 
     public int getCode() {
         return code;
@@ -30,11 +30,11 @@ public class Supplier {
         this.rating = rating;
     }
 
-    public int getFreeShippingCost() {
+    public float getFreeShippingCost() {
         return freeShippingCost;
     }
 
-    public void setFreeShippingCost(int freeShippingCost) {
+    public void setFreeShippingCost(float freeShippingCost) {
         this.freeShippingCost = freeShippingCost;
     }
 }

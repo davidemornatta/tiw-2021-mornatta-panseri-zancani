@@ -83,7 +83,7 @@ public class Cart {
         float supplierTotalAmount = findProductTotalFor(supplierCode, con);
         SupplierDAO supplierDAO = new SupplierDAO(con);
         Supplier supplier = supplierDAO.findSupplierByCode(supplierCode);
-        int minForFreeShipping = supplier.getFreeShippingCost();
+        float minForFreeShipping = supplier.getFreeShippingCost();
 
         if (supplierTotalAmount <= minForFreeShipping) {
             PriceRangeDAO prDAO = new PriceRangeDAO(con);

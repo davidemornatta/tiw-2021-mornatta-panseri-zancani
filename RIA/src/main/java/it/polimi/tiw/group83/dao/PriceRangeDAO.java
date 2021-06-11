@@ -29,7 +29,7 @@ public class PriceRangeDAO {
                         PriceRange range = new PriceRange();
                         range.setMaxArticles(result.getInt("max_articles"));
                         range.setMinArticles(result.getInt("min_articles"));
-                        range.setShippingCost(result.getInt("shipping_cost"));
+                        range.setShippingCost(result.getFloat("shipping_cost"));
                         ranges.add(range);
                     }
                 }

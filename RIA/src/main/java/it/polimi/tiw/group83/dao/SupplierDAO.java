@@ -22,7 +22,7 @@ public class SupplierDAO {
         supplier.setCode(result.getInt("code"));
         supplier.setName(result.getString("name"));
         supplier.setRating(result.getInt("rating"));
-        supplier.setFreeShippingCost(result.getInt("free_shipping_cost"));
+        supplier.setFreeShippingCost(result.getFloat("free_shipping_cost"));
 
         return supplier;
     }
