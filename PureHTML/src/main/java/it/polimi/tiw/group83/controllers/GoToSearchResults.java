@@ -47,7 +47,7 @@ public class GoToSearchResults extends HttpServlet {
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 
         String searchQuery = request.getParameter("searchQuery");
-        Map<Product, Float> products = new HashMap<>();
+        Map<Product, Float> products = new LinkedHashMap<>();
         if (searchQuery != null && !searchQuery.isEmpty()) {
             try {
                 products = productDAO.searchForProductOrdered(searchQuery);

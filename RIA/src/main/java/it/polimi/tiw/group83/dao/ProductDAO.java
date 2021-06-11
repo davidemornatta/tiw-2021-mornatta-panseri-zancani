@@ -69,8 +69,9 @@ public class ProductDAO {
         String query = "SELECT code, name, description, category, image, min(price) AS 'price'  " +
                 "FROM product JOIN sells ON code = product_code " +
                 "WHERE name LIKE ? OR description LIKE ? OR category LIKE ? " +
-                "GROUP BY code";
-        Map<Product, Float> searchResult = new HashMap<>();
+                "GROUP BY code " +
+                "ORDER BY price";
+        Map<Product, Float> searchResult = new LinkedHashMap<>();
         try (PreparedStatement pstatement = con.prepareStatement(query)) {
             pstatement.setString(1, "%" + searchQuery + "%");
             pstatement.setString(2, "%" + searchQuery + "%");
@@ -80,7 +81,9 @@ public class ProductDAO {
                     return new HashMap<>();
                 else {
                     while(result.next()) {
-                        searchResult.put(createProductBean(result), result.getFloat("price"));
+                        Product product = createProductBean(result);
+                        float price = result.getFloat("price");
+                        searchResult.put(product, price);
                     }
                 }
             }

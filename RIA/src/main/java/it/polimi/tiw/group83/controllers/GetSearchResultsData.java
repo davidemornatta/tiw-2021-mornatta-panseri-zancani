@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @WebServlet("/GetSearchResultsData")
@@ -31,7 +32,7 @@ public class GetSearchResultsData extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ProductDAO productDAO = new ProductDAO(connection);
         String searchQuery = request.getParameter("searchQuery");
-        Map<Product, Float> products = new HashMap<>();
+        Map<Product, Float> products = new LinkedHashMap<>();
         if (searchQuery != null && !searchQuery.isEmpty()) {
             try {
                 products = productDAO.searchForProductOrdered(searchQuery);

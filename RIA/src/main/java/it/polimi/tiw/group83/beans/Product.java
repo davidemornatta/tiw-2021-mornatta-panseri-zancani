@@ -54,4 +54,12 @@ public class Product {
         ImageIO.write(image, "png", output);
         this.image = Base64.getEncoder().encodeToString(output.toByteArray());
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "code=" + code +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
