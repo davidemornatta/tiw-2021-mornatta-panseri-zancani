@@ -1,0 +1,18 @@
+title Search
+
+participant "home.html +\nebazon.js" as home
+
+activate home
+activate Page Orchestrator
+home->Page Orchestrator:navigateTo(searchResults,\nsearchQuery, null)
+activate SearchResults
+Page Orchestrator->SearchResults:show(searchQuery, null)
+participant GetSearchResultsData #lightblue
+activate GetSearchResultsData
+SearchResults->GetSearchResultsData:AJAX GET\nsearchQuery
+participant ProductDAO #lightblue
+activate ProductDAO
+GetSearchResultsData->ProductDAO:searchForProductOrdered(searchQuery)
+ProductDAO-->GetSearchResultsData:products
+GetSearchResultsData-->SearchResults:products
+SearchResults->SearchResults:update(products, null)

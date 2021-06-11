@@ -1,0 +1,30 @@
+title View Product Details
+
+participant "home.html +\nebazon.js" as home
+
+activate home
+activate Page Orchestrator
+home->Page Orchestrator:navigateTo(searchResults,\nnull, productCode)
+activate SearchResults
+Page Orchestrator->SearchResults:show(null, productCode)
+participant GetProductDetailsData #lightblue
+activate GetProductDetailsData
+SearchResults->GetProductDetailsData:AJAX GET\nproductCode
+participant ProductDAO #lightblue
+activate ProductDAO
+GetProductDetailsData->ProductDAO:findProductByCode(productCode)
+ProductDAO-->GetProductDetailsData:product
+participant SupplierDAO #lightblue
+activate SupplierDAO
+GetProductDetailsData->SupplierDAO:findAllSuppliersFor(productCode)
+SupplierDAO-->GetProductDetailsData:suppliers
+loop s : suppliers
+GetProductDetailsData->ProductDAO:getProductPriceFor(productCode, s.getCode())
+ProductDAO-->GetProductDetailsData:price
+participant PriceRangeDAO #lightblue
+activate PriceRangeDAO
+GetProductDetailsData->PriceRangeDAO:findPriceRangesForSupplier(s.getCode())
+PriceRangeDAO-->GetProductDetailsData:priceRanges
+end
+GetProductDetailsData-->SearchResults:productDetails\n(product + \nsuppliers with price and ranges)
+SearchResults->SearchResults:update(null,productDetails)

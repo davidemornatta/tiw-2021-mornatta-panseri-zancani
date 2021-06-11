@@ -1,0 +1,24 @@
+title Load Home
+
+participant "home.html +\nebazon.js" as home
+
+activate home
+[->home:load
+activate Page Orchestrator
+home->Page Orchestrator:start()
+activate NavBar
+Page Orchestrator->NavBar:registerEvents()
+activate Local Storage
+Page Orchestrator->Local Storage:getItem("cart")
+Local Storage-->Page Orchestrator:cart || {}
+activate Home
+Page Orchestrator->Home:show()
+participant GetRecentlyViewedList #lightblue
+activate GetRecentlyViewedList
+Home->GetRecentlyViewedList:AJAX GET
+participant UserDAO #lightblue
+GetRecentlyViewedList->UserDAO:findLastFiveViewedBy\n(session.user.id)
+UserDAO-->GetRecentlyViewedList:products
+GetRecentlyViewedList-->Home:products
+Home->Home:update()
+home->Page Orchestrator:refresh()

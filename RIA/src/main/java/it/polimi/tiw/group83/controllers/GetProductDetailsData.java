@@ -41,7 +41,6 @@ public class GetProductDetailsData extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 

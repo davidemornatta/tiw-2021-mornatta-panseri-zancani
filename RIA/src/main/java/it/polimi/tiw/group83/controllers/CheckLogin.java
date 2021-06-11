@@ -59,8 +59,7 @@ public class CheckLogin extends HttpServlet {
             return;
         }
 
-        // If the user exists, add info to the session and go to home page, otherwise
-        // show login page with error message
+        // If the user exists, add info to the session
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println("Incorrect mail or password");
@@ -71,7 +70,6 @@ public class CheckLogin extends HttpServlet {
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(user.getName() + " " + user.getSurname());
         }
-
     }
 
     @Override

@@ -1,0 +1,26 @@
+title Login
+
+participant "index.html +\nchecklogin.js" as index
+participant CheckLogin #lightblue
+participant UserDAO #lightblue
+participant Session #lightblue
+
+activate index
+[->index:Click submit\nbutton
+activate CheckLogin
+index->CheckLogin:AJAX POST\nmail password
+activate UserDAO
+CheckLogin->UserDAO:checkCredentials(mail, password)
+UserDAO-->CheckLogin:user || null
+alt user == null
+CheckLogin-->index:SC 401
+index->index:show error\nmessage
+else user != null
+activate Session
+CheckLogin->Session:setAttribute("user", user)
+CheckLogin-->index:SC 200\nusername
+activate Session Storage
+index->Session Storage:setItem('username', username)
+activate Window
+index->Window:location = home.html
+end
