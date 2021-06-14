@@ -1,0 +1,10 @@
+title Logout
+
+activate Logout
+note left of Logout : doPost\n\nPOST\n/Logout
+
+activate Session
+Logout->Session: invalidate()
+activate index.html
+Logout->index.html: redirect
+deactivate Session

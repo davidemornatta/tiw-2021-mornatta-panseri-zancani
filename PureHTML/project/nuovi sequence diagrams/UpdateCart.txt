@@ -1,0 +1,11 @@
+title Update Cart
+
+activate UpdateCart
+note left of UpdateCart : doPost\n\nPOST\n/UpdateCart\nproductCode\nsupplierCode\n\nFrom:\nSearchResults.html
+activate Session
+UpdateCart -> Session : getAttribute("cart")
+UpdateCart <-- Session : cart 
+
+UpdateCart -> Cart : addProduct(supplierCode, productCode)
+activate GoToShoppingCart
+UpdateCart -> GoToShoppingCart : redirect

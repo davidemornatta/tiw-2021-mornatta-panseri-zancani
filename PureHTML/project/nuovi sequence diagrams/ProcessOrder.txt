@@ -1,0 +1,37 @@
+title Process order
+
+activate ProcessOrder
+note left of ProcessOrder : doPost\n\nPOST\n/ProcessOrder\nsupplierCode\n\nFrom:\nSearchResults.html
+activate Session
+ProcessOrder -> Session : getAttribute("cart")
+ProcessOrder <-- Session : cart 
+ProcessOrder -> Session : getAttribute("user")
+ProcessOrder <-- Session : user
+ProcessOrder->SupplierDAO : new SupplierDAO()
+activate SupplierDAO
+ProcessOrder->OrderDAO: new OrderDAO()
+activate OrderDAO
+ProcessOrder->SupplierDAO: findSupplierByCode(supplierCode)
+ProcessOrder<--SupplierDAO: supplierName
+
+activate cart
+ProcessOrder->cart : findProductTotalFor(supplierCode)
+ProcessOrder<--cart : total
+ProcessOrder->cart : getAllShippingCosts(supplierName)
+ProcessOrder<--cart : shippingCost
+ProcessOrder->cart : findAllProductAndQuantitiesFor(supplierCode)
+ProcessOrder<--cart : prodQuantities
+activate User
+ProcessOrder->User : getShippingAddress()
+ProcessOrder<--User : address
+ProcessOrder->User : getId()
+ProcessOrder<--User : id
+
+ProcessOrder->OrderDAO : createOrder(total+shippingCost, date, address, supplierCode, id, prodQuantities)
+
+ProcessOrder->cart: removeOrderedItems(supplierCode)
+
+
+
+activate GoToOrders
+ProcessOrder -> GoToOrders : redirect

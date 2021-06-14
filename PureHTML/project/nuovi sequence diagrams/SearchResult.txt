@@ -1,0 +1,59 @@
+title Search Results
+
+activate GoToSearchResults
+note left of GoToSearchResults : doGet\n\nGET\n/GoToSearchResults\nsearchQuery\n[opt: selectedCode]\n\nFrom: Home.html
+GoToSearchResults -> ProductDAO : newProductDAO()
+activate ProductDAO
+alt searchQuery != null && !searchQuery.isEmpty()
+
+GoToSearchResults -> ProductDAO : searchForProductOrdered(searchQuery)
+GoToSearchResults <-- ProductDAO : products
+end
+activate ctx
+GoToSearchResults->ctx : setVariable(products)
+
+
+opt selectedCode!=null && !selectedCode.isEmpty()
+GoToSearchResults -> ProductDAO : findProductByCode(selectedCode)
+GoToSearchResults <-- ProductDAO : selectedProduct
+
+GoToSearchResults->SupplierDAO : new SupplierDAO()
+activate SupplierDAO
+GoToSearchResults->SupplierDAO :findAllSuppliers(selectedCode)
+GoToSearchResults<--SupplierDAO : suppliers
+GoToSearchResults->PriceRangeDAO : new PriceRangeDAO()
+activate PriceRangeDAO
+
+loop supplier:suppliers
+GoToSearchResults->ProductDAO : getProductPriceFor(selectedCode, supplier.code) 
+GoToSearchResults<--ProductDAO : price
+
+GoToSearchResults->session.cart : findProductQuantityFor(supplier.code)
+activate session.cart
+GoToSearchResults<--session.cart : quantity
+GoToSearchResults->session.cart : findProductTotalFor(supplier.code)
+GoToSearchResults<--session.cart : total
+
+GoToSearchResults->PriceRangeDAO : findPriceRangesForSupplier(supplier.code)
+GoToSearchResults<--PriceRangeDAO : priceRanges
+end 
+
+GoToSearchResults->UserDAO : new UserDAO()
+activate UserDAO
+GoToSearchResults->UserDAO : addViewToProductFrom(user.id, selectedCode,time) 
+
+GoToSearchResults->ctx : setVariable(selectedProduct)
+GoToSearchResults->ctx : setVariable(price)
+GoToSearchResults->ctx :setVariable(priceRanges)
+GoToSearchResults->ctx :setVariable(total)
+GoToSearchResults->ctx :setVariable(quantity)
+
+end
+
+
+GoToSearchResults->ctx : setVariable(isProductSelected)
+
+
+
+activate TemplateEngine
+GoToSearchResults->TemplateEngine : process(ctx,"SearchResults.html",...)

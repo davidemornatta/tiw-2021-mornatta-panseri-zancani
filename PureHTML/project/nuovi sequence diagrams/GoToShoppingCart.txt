@@ -1,0 +1,26 @@
+title Go To Shopping Cart
+
+note left of GoToShoppingCart : doGet\n\nGET\n/GoToSearchResults
+activate GoToShoppingCart
+GoToShoppingCart -> session.cart : getAllSuppliersCodes()
+activate session.cart
+GoToShoppingCart <-- session.cart : supplierCodes
+GoToShoppingCart -> session.cart : findAllProducts()
+GoToShoppingCart <-- session.cart : supplierProducts
+
+loop supplier:suppliersProducts.keySet()
+GoToShoppingCart->GoToShoppingCart:supplierQuantities(supplier)
+end 
+GoToShoppingCart->session.cart: findAllProductTotals()
+GoToShoppingCart<--session.cart: supplierTotals
+GoToShoppingCart->session.cart: getAllShippingCosts()
+GoToShoppingCart<--session.cart: supplierShippings
+
+activate ctx
+GoToShoppingCart -> ctx : setVariable(supplierCodes)
+GoToShoppingCart -> ctx : setVariable(supplierProducts)
+GoToShoppingCart -> ctx : setVariable(supplierQuantities)
+GoToShoppingCart -> ctx : setVariable(supplierTotals)setVariable(supplierShippings)
+activate TemplateEngine
+GoToShoppingCart->TemplateEngine : process(ctx,"cart.html",...)
+

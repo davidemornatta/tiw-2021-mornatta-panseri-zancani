@@ -1,0 +1,18 @@
+title Go to Home
+
+activate GoToHome
+note left of GoToHome : redirect
+GoToHome -> UserDAO : new UserDAO()
+
+GoToHome -> UserDAO :findLastFiveViewedBy(session.user.id)
+GoToHome <-- UserDAO : lastViewedProducts
+alt lastViewedProducts.size()<5
+GoToHome->ProductDAO :new ProductDAO()
+activate ProductDAO
+GoToHome->ProductDAO :findRandomProducts()
+GoToHome <-- ProductDAO :products
+end
+activate ctx
+GoToHome ->ctx : setVariable(lastViewedProducts)
+activate TemplateEngine
+GoToHome -> TemplateEngine : process(ctx,"Home.html", ... )
