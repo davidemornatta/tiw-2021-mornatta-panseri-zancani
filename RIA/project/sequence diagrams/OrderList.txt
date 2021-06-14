@@ -1,0 +1,23 @@
+title View order list
+
+participant "home.html +\nebazon.js" as home
+
+activate home
+activate Page Orchestrator
+home->Page Orchestrator:navigateTo(OrderPage)
+activate OrderPage
+Page Orchestrator->OrderPage : show()
+participant GetOrderList #lightblue
+activate GetOrderList
+OrderPage->GetOrderList: AJAX GET
+participant OrderDAO #lightblue
+activate OrderDAO
+GetOrderList->OrderDAO: findUserOrders(session.user.id)
+GetOrderList<--OrderDAO: orders
+loop order:orders
+GetOrderList->OrderDAO:findAllProductsInOrder(order.getCode())
+GetOrderList<--OrderDAO: products
+end
+OrderPage<--GetOrderList: orderProducts
+OrderPage->OrderPage: update(orderProducts)
+
