@@ -22,10 +22,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet("/GetProductDetailsData")
 public class GetProductDetailsData extends HttpServlet {
@@ -71,7 +68,7 @@ public class GetProductDetailsData extends HttpServlet {
 
         List<Supplier> suppliers;
         Map<Supplier, Float> supplierPrice = new HashMap<>();
-        Map<Supplier, List<PriceRange>> ranges = new HashMap<>();
+        Map<Supplier, List<String>> ranges = new HashMap<>();
 
         SupplierDAO supplierDAO = new SupplierDAO(connection);
         try {
@@ -83,7 +80,11 @@ public class GetProductDetailsData extends HttpServlet {
                 supplierPrice.put(s, price);
 
                 List<PriceRange> priceRanges = priceRangeDAO.findPriceRangesForSupplier(s.getCode());
-                ranges.put(s, priceRanges);
+                List<String> priceRangesStrings = new ArrayList<>();
+                for (PriceRange range : priceRanges) {
+                    priceRangesStrings.add(range.toString());
+                }
+                ranges.put(s, priceRangesStrings);
             }
 
             UserDAO userDAO = new UserDAO(connection);
