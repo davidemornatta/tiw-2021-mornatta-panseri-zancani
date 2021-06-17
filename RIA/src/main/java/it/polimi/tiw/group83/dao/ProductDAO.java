@@ -118,7 +118,7 @@ public class ProductDAO {
     }
 
     public Collection<? extends Product> findRandomProducts(int quantity) throws SQLException, IOException {
-        String query = "SELECT  * FROM product WHERE category = 'Technology' LIMIT ?";
+        String query = "SELECT  * FROM product WHERE category = 'Fantasy' LIMIT ?";
         List<Product> products = new ArrayList<>();
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setInt(1, quantity);
