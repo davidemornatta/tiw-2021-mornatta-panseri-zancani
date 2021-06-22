@@ -1,0 +1,21 @@
+title Logout
+
+participant "home.html +\nebazon.js" as home
+
+activate Session storage
+home->Session storage:removeItem('username')
+activate home
+participant Logout#lightblue
+activate Logout
+home->Logout:POST\n/Logout
+participant Session #lightblue
+activate Session
+Logout->Session:invalidate()
+Logout-->home:
+deactivate Session
+activate index.html
+home->index.html: redirect
+
+
+
+

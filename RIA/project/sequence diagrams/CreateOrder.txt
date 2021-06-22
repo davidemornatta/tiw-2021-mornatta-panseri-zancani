@@ -1,0 +1,38 @@
+title Create Order
+
+activate CartPage
+[->CartPage:Click\norder\nbutton
+participant CreateOrder #lightblue
+activate CreateOrder
+CartPage->CreateOrder: AJAX POST\norderForm
+participant SupplierDAO #lightblue
+activate SupplierDAO
+CreateOrder->SupplierDAO:findSupplierByCode(supplierCode)
+CreateOrder<--SupplierDAO: supplierName
+participant OrderDAO #lightblue
+activate OrderDAO
+
+activate cart
+CreateOrder->cart : findProductTotalFor(supplierCode)
+CreateOrder<--cart : total
+CreateOrder->cart : getAllShippingCosts(supplierName)
+CreateOrder<--cart : shippingCost
+CreateOrder->cart : findAllProductAndQuantitiesFor(supplierCode)
+CreateOrder<--cart : prodQuantities
+activate Session.user
+CreateOrder->Session.user : getShippingAddress()
+CreateOrder<--Session.user : address
+CreateOrder->Session.user : getId()
+CreateOrder<--Session.user : id
+CreateOrder->OrderDAO : createOrder(total+shippingCost, date, address, supplierCode, id, prodQuantities)
+CreateOrder<--OrderDAO : 
+CreateOrder-->CartPage:
+CartPage->CartPage: delete
+note left of CartPage : delete ordered\nitems from cart 
+activate PageOrchestrator
+CartPage->PageOrchestrator: navigateTo(orderPage)
+
+
+
+
+
