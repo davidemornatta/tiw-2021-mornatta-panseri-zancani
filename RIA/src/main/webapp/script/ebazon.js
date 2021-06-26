@@ -234,6 +234,10 @@
                         } else if (req.status === 401) {
                             sessionStorage.removeItem("username");
                             window.location.href = "index.html";
+                        } else if(req.status === 406) {
+                            localStorage.setItem("cart", atob(req.responseText));
+                            alertText.textContent = "Your cart was invalid and has been updated";
+                            alertContainer.className = "";
                         } else {
                             alertText.textContent = req.responseText;
                             alertContainer.className = "";
@@ -377,6 +381,10 @@
                     } else if (req.status === 401) {
                         sessionStorage.removeItem("username");
                         window.location.href = "index.html";
+                    } else if(req.status === 406) {
+                        localStorage.setItem("cart", atob(req.responseText));
+                        alertText.textContent = "Your cart was invalid and has been updated";
+                        alertContainer.className = "";
                     } else {
                         alertText.textContent = req.responseText;
                         alertContainer.className = "";
@@ -493,6 +501,10 @@
                             } else if (req.status === 401) {
                                 sessionStorage.removeItem("username");
                                 window.location.href = "index.html";
+                            } else if(req.status === 406) {
+                                localStorage.setItem("cart", atob(req.responseText));
+                                alertText.textContent = "Your cart was invalid and has been updated";
+                                alertContainer.className = "";
                             } else {
                                 alertText.textContent = req.responseText;
                                 alertContainer.className = "";

@@ -1,5 +1,6 @@
 package it.polimi.tiw.group83.controllers;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.polimi.tiw.group83.beans.Cart;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.Map;
 
 @WebServlet("/GetCartPrices")
@@ -35,6 +37,18 @@ public class GetCartPrices extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Malformed cart parameter!");
+            return;
+        }
+
+        try {
+            if (!cart.checkValidity(connection)) {
+                response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+                response.getWriter().println(Base64.getEncoder().encodeToString(new Gson().toJson(cart).getBytes()));
+                return;
+            }
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Unable to check cart validity");
             return;
         }
 

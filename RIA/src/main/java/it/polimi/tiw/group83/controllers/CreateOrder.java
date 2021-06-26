@@ -1,7 +1,9 @@
 package it.polimi.tiw.group83.controllers;
 
 
+import com.google.gson.Gson;
 import it.polimi.tiw.group83.beans.Cart;
+import it.polimi.tiw.group83.beans.Supplier;
 import it.polimi.tiw.group83.beans.User;
 import it.polimi.tiw.group83.dao.OrderDAO;
 import it.polimi.tiw.group83.dao.SupplierDAO;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.Calendar;
 
 @WebServlet("/CreateOrder")
@@ -43,17 +46,42 @@ public class CreateOrder extends HttpServlet {
             return;
         }
 
+        try {
+            if (!cart.checkValidity(connection)) {
+                resp.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+                resp.getWriter().println(Base64.getEncoder().encodeToString(new Gson().toJson(cart).getBytes()));
+                return;
+            }
+        } catch (SQLException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().println("Unable to check cart validity");
+            return;
+        }
+
         String supplierCodeRaw = req.getParameter("supplier");
         int supplierCode;
+        SupplierDAO supplierDAO = new SupplierDAO(connection);
+        Supplier supplier;
         try {
             supplierCode = Integer.parseInt(supplierCodeRaw);
+            supplier = supplierDAO.findSupplierByCode(supplierCode);
+            if(supplier == null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().println("No supplier with code " + supplierCode);
+                return;
+            }
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().println("No supplier code given");
             return;
         }
 
-        SupplierDAO supplierDAO = new SupplierDAO(connection);
+        if(!cart.containsOrderFor(supplierCode)) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("The cart does not contain an order for supplier with code " + supplierCode);
+            return;
+        }
+
         String supplierName;
         OrderDAO orderDAO = new OrderDAO(connection);
         try {

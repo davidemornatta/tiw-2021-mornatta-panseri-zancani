@@ -48,6 +48,12 @@ public class ProcessOrder extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "No supplier code given");
             return;
         }
+
+        if(!cart.containsOrderFor(supplierCode)) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "The cart does not contain an order for this supplier");
+            return;
+        }
+
         OrderDAO orderDAO = new OrderDAO(connection);
         try {
             supplierName = supplierDAO.findSupplierByCode(supplierCode).getName();

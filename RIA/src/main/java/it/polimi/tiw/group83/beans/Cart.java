@@ -100,8 +100,9 @@ public class Cart {
         return new AbstractMap.SimpleEntry<>(supplier.getName(), shippingCosts);
     }
 
-    public void checkValidity(Connection con) throws SQLException {
+    public boolean checkValidity(Connection con) throws SQLException {
         ProductDAO productDAO = new ProductDAO(con);
+        boolean valid = true;
         for (Map.Entry<Integer, Map<Integer, Integer>> entry : supplierProductsMap.entrySet()) {
             Integer supplier = entry.getKey();
             Map<Integer, Integer> productQuantities = entry.getValue();
@@ -109,10 +110,13 @@ public class Cart {
             int productCode;
             while (iterator.hasNext()) {
                 productCode = iterator.next();
-                if (!productDAO.isProductSoldBy(productCode, supplier))
+                if (!productDAO.isProductSoldBy(productCode, supplier)) {
                     iterator.remove();
+                    valid = false;
+                }
             }
         }
+        return valid;
     }
 
     public Map<String, Float> getAllShippingCosts(Connection con) throws SQLException {
@@ -150,6 +154,10 @@ public class Cart {
             cartContents.put(supplierCode, productQuantities);
         }
         return new Cart(cartContents);
+    }
+
+    public boolean containsOrderFor(int supplierCode) {
+        return supplierProductsMap.containsKey(supplierCode);
     }
 
     @Override

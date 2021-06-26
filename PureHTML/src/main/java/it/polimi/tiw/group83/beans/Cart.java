@@ -142,4 +142,8 @@ public class Cart {
 
         return shippingCosts;
     }
+
+    public boolean containsOrderFor(int supplierCode) {
+        return supplierProductsMap.containsKey(supplierCode);
+    }
 }

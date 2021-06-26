@@ -54,6 +54,8 @@ public class UpdateCart extends HttpServlet {
         int quantity;
         try {
             quantity = Integer.parseInt(req.getParameter("quantity"));
+            if(quantity < 1)
+                throw new RuntimeException("Quantity must be greater than 0");
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid quantity parameter");
             return;
