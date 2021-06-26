@@ -31,8 +31,8 @@ public class PriceRange {
 
     @Override
     public String toString() {
-        return "minArticles=" + minArticles +
-                ", maxArticles=" + maxArticles +
-                ", shippingCost=" + shippingCost;
+        return "Min Articles: " + minArticles +
+                ", Max Articles: " + maxArticles +
+                ", Shipping Cost: $" + shippingCost;
     }
 }
