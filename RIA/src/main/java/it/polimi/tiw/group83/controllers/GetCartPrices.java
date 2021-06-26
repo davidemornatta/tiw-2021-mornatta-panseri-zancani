@@ -43,7 +43,8 @@ public class GetCartPrices extends HttpServlet {
         try {
             if (!cart.checkValidity(connection)) {
                 response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-                response.getWriter().println(Base64.getEncoder().encodeToString(new Gson().toJson(cart).getBytes()));
+                response.getWriter().println(Base64.getEncoder().encodeToString(
+                        new Gson().toJsonTree(cart).getAsJsonObject().get("supplierProductsMap").toString().getBytes()));
                 return;
             }
         } catch (SQLException e) {

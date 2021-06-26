@@ -123,6 +123,7 @@
         this.suppliersTable = _suppliersTable;
 
         this.lastSearchQuery = "";
+        this.lastSelectedProductCode = -1;
 
         this.show = function (searchQuery, selectedProduct) {
             let self = this;
@@ -150,6 +151,7 @@
             }
             if(selectedProduct != null) {
                 this.productDetailsContainer.style.visibility = "visible";
+                this.lastSelectedProductCode = selectedProduct;
                 makeCall("GET", "GetProductDetailsData?productCode=" + selectedProduct, null,
                     function (req) {
                         if (req.readyState === XMLHttpRequest.DONE) {
@@ -235,9 +237,12 @@
                             sessionStorage.removeItem("username");
                             window.location.href = "index.html";
                         } else if(req.status === 406) {
-                            localStorage.setItem("cart", atob(req.responseText));
+                            let stringCart = atob(req.responseText);
+                            cart = JSON.parse(stringCart);
+                            localStorage.setItem("cart", stringCart);
                             alertText.textContent = "Your cart was invalid and has been updated";
                             alertContainer.className = "";
+                            self.show(self.lastSearchQuery, self.lastSelectedProductCode);
                         } else {
                             alertText.textContent = req.responseText;
                             alertContainer.className = "";
@@ -382,9 +387,12 @@
                         sessionStorage.removeItem("username");
                         window.location.href = "index.html";
                     } else if(req.status === 406) {
-                        localStorage.setItem("cart", atob(req.responseText));
+                        let stringCart = atob(req.responseText);
+                        cart = JSON.parse(stringCart);
+                        localStorage.setItem("cart", stringCart);
                         alertText.textContent = "Your cart was invalid and has been updated";
                         alertContainer.className = "";
+                        self.show();
                     } else {
                         alertText.textContent = req.responseText;
                         alertContainer.className = "";
@@ -502,9 +510,12 @@
                                 sessionStorage.removeItem("username");
                                 window.location.href = "index.html";
                             } else if(req.status === 406) {
-                                localStorage.setItem("cart", atob(req.responseText));
+                                let stringCart = atob(req.responseText);
+                                cart = JSON.parse(stringCart);
+                                localStorage.setItem("cart", stringCart);
                                 alertText.textContent = "Your cart was invalid and has been updated";
                                 alertContainer.className = "";
+                                self.show();
                             } else {
                                 alertText.textContent = req.responseText;
                                 alertContainer.className = "";

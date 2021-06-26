@@ -103,6 +103,7 @@ public class Cart {
     public boolean checkValidity(Connection con) throws SQLException {
         ProductDAO productDAO = new ProductDAO(con);
         boolean valid = true;
+        List<Integer> suppliersToRemove = new ArrayList<>();
         for (Map.Entry<Integer, Map<Integer, Integer>> entry : supplierProductsMap.entrySet()) {
             Integer supplier = entry.getKey();
             Map<Integer, Integer> productQuantities = entry.getValue();
@@ -115,7 +116,16 @@ public class Cart {
                     valid = false;
                 }
             }
+            if(supplierProductsMap.get(supplier).isEmpty()) {
+                valid = false;
+                suppliersToRemove.add(supplier);
+            }
         }
+
+        for(int supplierCode : suppliersToRemove) {
+            supplierProductsMap.remove(supplierCode);
+        }
+
         return valid;
     }
 

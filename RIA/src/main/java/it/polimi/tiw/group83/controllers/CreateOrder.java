@@ -49,7 +49,8 @@ public class CreateOrder extends HttpServlet {
         try {
             if (!cart.checkValidity(connection)) {
                 resp.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-                resp.getWriter().println(Base64.getEncoder().encodeToString(new Gson().toJson(cart).getBytes()));
+                resp.getWriter().println(Base64.getEncoder().encodeToString(
+                        new Gson().toJsonTree(cart).getAsJsonObject().get("supplierProductsMap").toString().getBytes()));
                 return;
             }
         } catch (SQLException e) {
