@@ -25,7 +25,7 @@
                 <table class="order-table">
                     <tr>
 
-                        <td width="5%"></td>
+
                         <td class="order-text">
                             Order code: <span th:text="${order.code}"></span>
                             <br>
@@ -37,7 +37,7 @@
                             <br>
                             Shipping address: <span th:text="${order.shippingAddress}"></span>
                         </td>
-                        <td width="5%">
+
                         </td>
                         <td>
 
@@ -50,7 +50,7 @@
                                 </thead>
                                 <tbody class="table-light">
                                 <tr th:each="prodMap : ${orderProducts.get(order)}">
-                                    <td width="65%" class="align-content-center" th:text="${prodMap.getKey().getName()}"></td>
+                                    <td class="align-content-center product-col" th:text="${prodMap.getKey().getName()}"></td>
                                     <td class="align-content-center" th:text="${prodMap.getValue()}"></td>
                                 </tr>
 
