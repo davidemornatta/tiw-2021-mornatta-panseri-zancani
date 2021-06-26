@@ -547,7 +547,6 @@
         }
 
         this.update = function (orderProducts) {
-            console.log(orderProducts);
             this.listContainer.innerHTML = "";
             let orderList = document.createElement("ul");
             orderList.className+="list-group lightGrey-text ";
