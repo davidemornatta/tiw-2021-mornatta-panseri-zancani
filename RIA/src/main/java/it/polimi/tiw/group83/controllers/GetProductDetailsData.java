@@ -57,12 +57,12 @@ public class GetProductDetailsData extends HttpServlet {
             selectedProduct = productDAO.findProductByCode(productCode);
             if (selectedProduct == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                response.getWriter().println("Resource not found");
+                response.getWriter().println("Cannot find product with given code");
                 return;
             }
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().println("Not possible to recover mission");
+            response.getWriter().println("Not possible to recover product");
             return;
         }
 
@@ -92,7 +92,7 @@ public class GetProductDetailsData extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().println("Not possible to recover mission");
+            response.getWriter().println("Not possible to recover details");
             return;
         }
 
