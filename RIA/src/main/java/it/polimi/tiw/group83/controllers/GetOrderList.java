@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,11 +39,11 @@ public class GetOrderList extends HttpServlet {
         OrderDAO orderDAO = new OrderDAO(connection);
         List<Order> orders;
         Map<Product, Integer> products;
-        Map<Order, Map<Product, Integer>> orderProducts = new HashMap<>();
-
+        Map<Order, Map<Product, Integer>> orderProducts = new LinkedHashMap<>();
 
         try {
             orders = orderDAO.findUserOrders(user.getId());
+
             for (Order o : orders) {
                 try {
                     products = orderDAO.findAllProductsInOrder(o.getCode());
@@ -61,7 +62,7 @@ public class GetOrderList extends HttpServlet {
             return;
         }
 
-        JsonObject resp = new JsonObject();
+        JsonArray resp = new JsonArray();
 
         for (Order order : orderProducts.keySet()) {
             JsonArray prodQuantity = new JsonArray();
@@ -79,13 +80,12 @@ public class GetOrderList extends HttpServlet {
             orderDetails.addProperty("orderCode", order.getCode());
             orderDetails.addProperty("suppCode", order.getSupplierCode());
             orderDetails.addProperty("totalAmount", order.getTotalAmount());
-            orderDetails.addProperty("shipppingDate", String.valueOf(order.getShippingDate()));
+            orderDetails.addProperty("shippingDate", String.valueOf(order.getShippingDate()));
             orderDetails.addProperty("shippingAddress", order.getShippingAddress());
 
             orderTot.add("orderDetails", orderDetails);
-            resp.add(String.valueOf(order.getCode()), orderTot);
+            resp.add(orderTot);
         }
-
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
